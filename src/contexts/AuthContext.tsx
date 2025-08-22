@@ -74,7 +74,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 // Context 생성
 interface AuthContextType extends AuthState {
   login: (credentials: LoginRequest) => Promise<void>;
-  register: (userData: RegisterRequest) => Promise<void>;
+  signup: (userData: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -146,10 +146,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // 회원가입
-  const register = async (userData: RegisterRequest) => {
+  const signup = async (userData: RegisterRequest) => {
     try {
       dispatch({ type: 'AUTH_START' });
-      await authAPI.register(userData);
+      await authAPI.signup(userData);
       // 회원가입 성공 후 자동 로그인
       await login({ email: userData.email, password: userData.password });
     } catch (error) {
@@ -184,7 +184,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const value: AuthContextType = {
     ...state,
     login,
-    register,
+    signup,
     logout,
     clearError,
   };

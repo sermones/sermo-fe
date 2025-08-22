@@ -1,7 +1,7 @@
 import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '../types/auth';
 
 // TODO: 백엔드 API 주소를 실제 주소로 변경
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'http://localhost:3000';
 
 export const authAPI = {
   // 로그인
@@ -23,8 +23,8 @@ export const authAPI = {
   },
 
   // 회원가입
-  async register(userData: RegisterRequest): Promise<RegisterResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+  async signup(userData: RegisterRequest): Promise<RegisterResponse> {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
