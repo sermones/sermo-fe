@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { usePWA } from "../hooks/usePWA";
+import { PWADiagnostics } from "../components/PWADiagnostics";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -164,6 +165,10 @@ function RouteComponent() {
               </span>
             </div>
           </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <PWADiagnostics />
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">

@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:pwa": "tsc -b && vite build && npm run generate-pwa-assets",
-    "generate-pwa-assets": "vite build --mode pwa",
+    "build": "npm run generate-icons && tsc -b && vite build",
+    "build:pwa": "npm run generate-icons && tsc -b && vite build",
+    "generate-icons": "node scripts/generate-icons.js",
     "preview": "vite preview",
     "preview:pwa": "vite preview --mode pwa",
     "lint": "eslint ."
@@ -31,6 +31,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "sharp": "^0.34.3",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0",
