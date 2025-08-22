@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
-/* iPhone 16 화면 너비 최적화 */
+/* Tailwind CSS v4 폰트 설정 */
+:root {
+  --font-family-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+}
+
+/* Pretendard 폰트 설정 */
 @layer base {
   html {
+    font-family: var(--font-family-sans);
     font-size: 16px;
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
@@ -20,6 +26,9 @@
     /* 터치 최적화 */
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    
+    /* Pretendard 폰트 적용 */
+    font-family: var(--font-family-sans);
   }
   
   /* iPhone 16 전용 미디어 쿼리 */
@@ -50,5 +59,10 @@
   .iphone16-width {
     width: 393px;
     max-width: 100vw;
+  }
+  
+  /* Pretendard 폰트 유틸리티 클래스 */
+  .font-pretendard {
+    font-family: var(--font-family-sans);
   }
 }
