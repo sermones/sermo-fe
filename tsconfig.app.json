@@ -26,7 +26,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    /* js 허용함 */
+    "allowJs": true, // .js, .jsx도 프로젝트에 포함
+    "checkJs": false // .js 타입 체크까지 하고 싶으면 true
   },
   "include": ["src"]
 }
