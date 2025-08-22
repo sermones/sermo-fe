@@ -1,7 +1,7 @@
 {
-  "name": "Junction Asia 2025",
-  "short_name": "Junction",
-  "description": "Junction Asia 2025 Progressive Web App",
+  "name": "Sermo",
+  "short_name": "Sermo",
+  "description": "Sermo Progressive Web App",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

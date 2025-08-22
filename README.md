@@ -1,6 +1,6 @@
-# Junction Asia 2025
+# Sermo
 
-Junction Asia 2025를 위한 Progressive Web App (PWA)입니다.
+Sermo를 위한 Progressive Web App (PWA)입니다.
 
 ## 🚀 PWA 기능
 
