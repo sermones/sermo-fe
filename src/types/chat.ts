@@ -3,7 +3,7 @@ export interface ChatMessage {
   id: string;
   type: 'user' | 'chatbot';
   content: string;
-  timestamp: Date;
+  timestamp: Date | string;
   sender: string;
   chatbotId?: string;
 }
@@ -32,8 +32,9 @@ export interface SendMessageRequest {
 // 메시지 전송 응답
 export interface SendMessageResponse {
   success: boolean;
-  message: string;
+  message?: string;
   response?: string;
+  sessionId?: string;
 }
 
 // 채팅 세션 정보

@@ -31,6 +31,20 @@ function RouteComponent() {
     navigate({ to: '/home/newChat' });
   };
 
+  // 챗봇 클릭 시 채팅 페이지로 이동 (전체 챗봇 정보 전달)
+  const handleChatbotClick = (chatbot: any) => {
+    console.log('챗봇 클릭됨:', chatbot);
+    navigate({ 
+      to: '/chat', 
+      search: { 
+        chatbotId: chatbot.uuid,
+        chatbotName: chatbot.name,
+        chatbotImage: getChatbotImage(chatbot),
+        chatbotDetails: chatbot.details
+      } 
+    });
+  };
+
   // 챗봇 이미지를 반환하는 함수
   const getChatbotImage = (chatbot: any) => {
     if (chatbot.image_id === 'custom' && chatbot.image_url) {
@@ -82,7 +96,11 @@ function RouteComponent() {
             {/* Chat Items - 실제 챗봇 데이터 사용 */}
             {chatbots && chatbots.length > 0 ? (
               chatbots.map((chatbot) => (
-                <div key={chatbot.uuid} className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px]">
+                <div 
+                  key={chatbot.uuid} 
+                  className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px] cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => handleChatbotClick(chatbot)}
+                >
                   <img 
                     src={getChatbotImage(chatbot)} 
                     alt={`${chatbot.name} 프로필`} 
@@ -98,7 +116,7 @@ function RouteComponent() {
                       {chatbot.name}
                     </div>
                     <div className="w-full h-[19px] gap-2 opacity-100">
-                      {chatbot.details}
+                      {chatbot.details || '챗봇 설명'}
                     </div>
                   </div>
                 </div>

@@ -6,20 +6,42 @@ const API_BASE_URL = 'http://localhost:3000';
 export const authAPI = {
   // 로그인
   async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
+    try {
+      console.log('=== 로그인 API 호출 ===');
+      console.log('요청 데이터:', credentials);
+      console.log('API URL:', `${API_BASE_URL}/auth/login`);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || '로그인에 실패했습니다');
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      console.log('응답 상태:', response.status);
+      console.log('응답 헤더:', response.headers);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('로그인 실패 응답:', errorData);
+        throw new Error(errorData.message || '로그인에 실패했습니다');
+      }
+
+      const responseData = await response.json();
+      console.log('로그인 성공 응답:', responseData);
+      
+      // 토큰이 응답에 없는 경우를 대비한 로깅
+      if (!responseData.token) {
+        console.warn('⚠️ 응답에 token 필드가 없습니다!');
+        console.warn('전체 응답:', responseData);
+      }
+      
+      return responseData;
+    } catch (error) {
+      console.error('로그인 API 호출 실패:', error);
+      throw error;
     }
-
-    return response.json();
   },
 
   // 회원가입

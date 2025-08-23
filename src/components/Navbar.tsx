@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React, { useMemo } from 'react';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -10,24 +10,15 @@ interface NavItem {
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('home');
-  const [activeIndex, setActiveIndex] = useState(0);
+  const location = useLocation();
 
   const navItems = useMemo(() => [
     {
       id: 'home',
       label: '홈',
-      path: '/home',
+      path: '/home/',
       icon: (
         <img src="/nav_1.svg" alt="home" className="w-8 h-8" />
-      ),
-    },
-    {
-      id: 'chat',
-      label: '채팅',
-      path: '/chat',
-      icon: (
-        <img src="/nav_2.svg" alt="chat" className="w-8 h-8" />
       ),
     },
     {
@@ -35,7 +26,7 @@ export const Navbar: React.FC = () => {
       label: '연습',
       path: '/home/practice',
       icon: (
-        <img src="/nav_3.svg" alt="practice" className="w-8 h-8" />
+        <img src="/nav_2.svg" alt="practice" className="w-8 h-8" />
       ),
     },
     {
@@ -43,15 +34,28 @@ export const Navbar: React.FC = () => {
       label: '퀘스트',
       path: '/home/quests',
       icon: (
-        <img src="/nav_4.svg" alt="quests" className="w-8 h-8" />
+        <img src="/nav_3.svg" alt="quests" className="w-8 h-8" />
+      ),
+    },
+    {
+      id: 'ranking',
+      label: '랭킹',
+      path: '/home/ranking',
+      icon: (
+        <img src="/nav_4.svg" alt="ranking" className="w-8 h-8" />
       ),
     },
   ], []);
 
+  // 현재 경로에 따라 활성 탭 자동 설정 (초기값도 함께 설정)
+  const currentPath = location.pathname;
+  const currentItem = navItems.find(item => item.path === currentPath) || navItems[0];
+  const activeTab = currentItem.id;
+  const activeIndex = navItems.findIndex(nav => nav.id === currentItem.id);
+
   const handleTabClick = (item: NavItem) => {
-    setActiveTab(item.id);
-    setActiveIndex(navItems.findIndex(nav => nav.id === item.id));
-    //navigate({ to: item.path });
+    // 실제 라우팅 구현
+    navigate({ to: item.path });
   };
 
   return (

@@ -5,9 +5,10 @@ interface ChatMessagesProps {
   messages: ChatMessage[];
   isTyping: boolean;
   chatbotName: string;
+  chatbotAvatar?: string;
 }
 
-export const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isTyping, chatbotName }) => {
+export const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isTyping, chatbotName, chatbotAvatar }) => {
   // 연속된 메시지를 그룹화
   const groupMessages = (messages: ChatMessage[]) => {
     const groups: ChatMessage[][] = [];
@@ -36,12 +37,25 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isTyping, 
   const messageGroups = groupMessages(messages);
 
   // 첫 번째 메시지의 날짜를 한국어로 포맷
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const formatDate = (date: Date | string) => {
+    try {
+      // 문자열인 경우 Date 객체로 변환
+      const dateObj = typeof date === 'string' ? new Date(date) : date;
+      
+      // 유효한 날짜인지 확인
+      if (isNaN(dateObj.getTime())) {
+        return '오늘';
+      }
+      
+      return dateObj.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.error('날짜 포맷 오류:', error);
+      return '오늘';
+    }
   };
 
   // 첫 번째 메시지가 있는 경우에만 날짜 표시
@@ -68,15 +82,23 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isTyping, 
               <div className="flex w-full">
                 {/* 프로필 사진 - 왼쪽에 홀로 */}
                 <div className="flex flex-col items-center mr-3 flex-shrink-0">
-                  <div className="w-8 h-8 bg-[#8E8EE7] rounded-full mb-1"></div>
+                  <img 
+                    src={chatbotAvatar || '/Checker.png'} 
+                    alt={`${chatbotName} 프로필`}
+                    className="w-8 h-8 rounded-full mb-1 object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/Checker.png';
+                    }}
+                  />
                 </div>
                 
                 {/* 이름과 메시지 - 오른쪽에 배치 */}
                 <div className="flex-1">
-                  {/* 이름 - 프로필 상단에 맞춰 위치 */}
-                  <div className="mb-2">
-                    <span className="text-sm font-medium text-gray-700">{group[0].sender}</span>
-                  </div>
+                                     {/* 이름 - 프로필 상단에 맞춰 위치 */}
+                   <div className="mb-2">
+                     <span className="text-sm font-medium text-gray-700">{chatbotName}</span>
+                   </div>
                   
                   {/* 메시지들 - 이름과 같은 왼쪽 정렬선 */}
                   <div className="space-y-2">
@@ -120,7 +142,15 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isTyping, 
           <div className="flex w-full">
             {/* 프로필 사진 - 왼쪽에 홀로 */}
             <div className="flex flex-col items-center mr-3 flex-shrink-0">
-              <div className="w-8 h-8 bg-[#8E8EE7] rounded-full mb-1"></div>
+              <img 
+                src={chatbotAvatar || '/Checker.png'} 
+                alt={`${chatbotName} 프로필`}
+                className="w-8 h-8 rounded-full mb-1 object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/Checker.png';
+                }}
+              />
             </div>
             
             {/* 이름과 타이핑 - 오른쪽에 배치 */}
