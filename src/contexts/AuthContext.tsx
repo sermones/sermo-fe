@@ -176,9 +176,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           token: response.token,
         },
       });
-      
+
       console.log('✅ AuthContext 상태 업데이트 완료');
       await fetchChatbots();
+
     } catch (error) {
       console.error('❌ 로그인 실패:', error);
       dispatch({
@@ -229,8 +230,33 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!state.token) return;
     
     try {
+      console.log('챗봇 목록 조회 시작');
       const chatbots = await authAPI.getChatbots(state.token);
-      dispatch({ type: 'SET_CHATBOTS', payload: chatbots });
+      console.log('챗봇 목록 조회 성공:', chatbots);
+      
+      // 각 챗봇의 이미지 URL을 가져와서 업데이트
+      const chatbotsWithImages = await Promise.all(
+        chatbots.map(async (chatbot) => {
+          if (chatbot.image_id) {
+            try {
+              console.log(`이미지 ${chatbot.image_id} 조회 시작`);
+              const imageResponse = await authAPI.getImage(state.token!, chatbot.image_id);
+              console.log(`이미지 ${chatbot.image_id} 조회 성공:`, imageResponse);
+              
+              return {
+                ...chatbot,
+                image_url: imageResponse.url
+              };
+            } catch (error) {
+              console.error(`이미지 ${chatbot.image_id} 조회 실패:`, error);
+              return chatbot;
+            }
+          }
+          return chatbot;
+        })
+      );
+      
+      dispatch({ type: 'SET_CHATBOTS', payload: chatbotsWithImages });
     } catch (error) {
       console.error('챗봇 목록 조회 오류:', error);
     }
@@ -249,19 +275,58 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         details: chatbotData.details,
         gender: chatbotData.gender,
         hashtags: chatbotData.hashtags,
-        image_id: chatbotData.image_id,
+        image_category: chatbotData.image_category,
+        image_id: chatbotData.image_id, // 실제 이미지 ID
         created_at: new Date().toISOString(),
-        // 이미지 정보 추가 (실제 구현에서는 백엔드에서 반환)
-        image_url: chatbotData.image_id === 'custom' ? '/custom-avatar.png' : undefined,
-        ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
+        // 이미지 URL은 나중에 실제 URL을 가져옴
+        image_url: undefined,
+        ai_generated_image: chatbotData.image_category === 'ai' ? '/ai-avatar.png' : undefined,
       };
       
+      console.log('새로 생성된 챗봇:', {
+        name: newChatbot.name,
+        image_category: newChatbot.image_category,
+        image_id: newChatbot.image_id,
+        image_url: newChatbot.image_url
+      });
+    
       // chatbots가 배열인지 확인하고 안전하게 추가
       if (Array.isArray(state.chatbots)) {
+        console.log('기존 chatbots 배열에 추가:', state.chatbots.length);
         dispatch({ type: 'ADD_CHATBOT', payload: newChatbot });
       } else {
-        // chatbots가 배열이 아니면 새로 설정
+        console.log('chatbots가 배열이 아님, 새로 설정');
         dispatch({ type: 'SET_CHATBOTS', payload: [newChatbot] });
+      }
+      
+      // 새로 생성된 챗봇의 이미지 URL도 즉시 가져오기
+      if (newChatbot.image_category === 'custom' && newChatbot.image_id) {
+        try {
+          console.log(`새로 생성된 챗봇 이미지 ${newChatbot.image_id} 조회 시작`);
+          const imageResponse = await authAPI.getImage(state.token!, newChatbot.image_id);
+          console.log(`새로 생성된 챗봇 이미지 조회 성공:`, imageResponse);
+          
+          // 이미지 URL이 포함된 완성된 챗봇 데이터로 업데이트
+          const updatedChatbot = {
+            ...newChatbot,
+            image_url: imageResponse.url
+          };
+          
+          // 기존 챗봇을 업데이트된 챗봇으로 교체
+          if (Array.isArray(state.chatbots)) {
+            const updatedChatbots = state.chatbots.map(chatbot => 
+              chatbot.uuid === newChatbot.uuid ? updatedChatbot : chatbot
+            );
+            dispatch({ type: 'SET_CHATBOTS', payload: updatedChatbots });
+          } else {
+            dispatch({ type: 'SET_CHATBOTS', payload: [updatedChatbot] });
+          }
+          
+          console.log('챗봇 이미지 URL 업데이트 완료:', updatedChatbot);
+        } catch (error) {
+          console.error(`새로 생성된 챗봇 이미지 ${newChatbot.image_id} 조회 실패:`, error);
+          // 이미지 조회 실패 시에도 챗봇은 그대로 유지
+        }
       }
     } catch (error) {
       console.error('챗봇 생성 오류:', error);

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useNavigate } from '@tanstack/react-router';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
+import { authAPI } from '../../../api/auth';
 
 export const Route = createFileRoute('/home/newChat/makeCharacter')({
   component: MakeCharacterPage,
@@ -26,6 +27,8 @@ function MakeCharacterPage() {
   const [appearanceDescription, setAppearanceDescription] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [aIGeneratedImageUrl, setAIGeneratedImageUrl] = useState<string | null>(null);
+  const [aIGeneratedImageId, setAIGeneratedImageId] = useState<string | null>(null);
   const [showCharacterInfo, setShowCharacterInfo] = useState(false);
   const [createdCharacter, setCreatedCharacter] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -107,12 +110,85 @@ function MakeCharacterPage() {
     }
   };
 
-  const handleAISubmit = () => {
+  const handleAISubmit = async () => {
+    if (!token) {
+      setError('인증 토큰이 없습니다. 다시 로그인해주세요.');
+      return;
+    }
+    
     if (appearanceDescription.trim()) {
-      // TODO: AI 이미지 생성 API 호출
-      console.log('AI 이미지 생성:', appearanceDescription);
-      setShowAIModal(false);
-      setAppearanceDescription('');
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        console.log('AI 이미지 생성 시작:', appearanceDescription);
+        
+        // 1. AI 이미지 생성 API 호출
+        const response = await authAPI.generateAIImage(token, appearanceDescription.trim());
+        
+        // 2. 생성된 이미지 ID로 이미지 정보 가져오기
+        const imageResponse = await authAPI.getImage(token, response.image_ids[0]);
+        
+        // 3. AI 생성된 이미지 정보를 상태에 저장
+        setAIGeneratedImageId(response.image_ids[0]);
+        setAIGeneratedImageUrl(imageResponse.url);
+        
+        console.log('AI 이미지 생성 성공:', {
+          imageId: response.image_ids[0],
+          imageUrl: imageResponse.url
+        });
+        
+        // 4. AI 이미지 생성 성공 후 바로 챗봇 생성
+        console.log('AI 이미지 생성 성공, 챗봇 생성 시작');
+        
+        // 챗봇 생성 요청 데이터
+        const chatbotData = {
+          name: characterName.trim(),
+          details: additionalDescription.trim() || `${characterName.trim()}와의 대화를 시작합니다.`,
+          gender: characterGender || 'unknown',
+          hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
+          image_category: 'ai',
+          image_id: response.image_ids[0],
+        };
+        
+        console.log('AI 챗봇 생성 요청 데이터:', chatbotData);
+        
+        // 챗봇 생성
+        await createChatbot(chatbotData);
+        
+        // 생성된 캐릭터 정보 설정 (AI 이미지 사용)
+        setCreatedCharacter({
+          name: characterName.trim(),
+          gender: characterGender || 'unknown',
+          hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
+          details: additionalDescription.trim(),
+          image_category: 'ai',
+          image_id: response.image_ids[0],
+          imagePreview: imageResponse.url // AI 생성된 이미지 URL 사용
+        });
+        
+        // 5. 모달 닫고 캐릭터 정보 창 표시
+        setShowAIModal(false);
+        setAppearanceDescription('');
+        setShowCharacterInfo(true);
+        
+        // 6. 2초 후 홈 화면으로 자동 이동
+        setTimeout(() => {
+          navigate({ to: '/home' });
+        }, 2000);
+        
+      } catch (error) {
+        console.error('AI 이미지 생성 실패:', error);
+        
+        // 실패 시 알림 후 다시 입력 창 표시
+        const errorMessage = error instanceof Error ? error.message : 'AI 이미지 생성에 실패했습니다';
+        alert(`AI 이미지 생성에 실패했습니다.\n\n${errorMessage}\n\n다시 시도해주세요.`);
+        
+        // 모달은 그대로 유지하여 사용자가 다시 입력할 수 있도록 함
+        setError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -126,18 +202,62 @@ function MakeCharacterPage() {
     setError(null);
 
     try {
+      if (!token) {
+        throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+      }
+
+      let imageId: string | undefined;
+      let imageCategory: string = 'default';
+      
+      // 이미지가 선택된 경우 먼저 업로드
+      if (selectedImage) {
+        try {
+          console.log('이미지 업로드 시작:', selectedImage.name);
+          console.log('사용할 토큰:', token ? token.substring(0, 20) + '...' : '토큰 없음');
+          
+          const uploadResponse = await authAPI.uploadImage(token, selectedImage);
+          imageId = uploadResponse.image.id; // 서버에서 반환된 image.id 저장
+          imageCategory = 'custom';
+          console.log('이미지 업로드 성공, ID:', imageId);
+        } catch (error) {
+          console.error('이미지 업로드 실패:', error);
+          
+          // 에러 메시지에 더 자세한 정보 포함
+          let errorMessage = '이미지 업로드에 실패했습니다.';
+          if (error instanceof Error) {
+            errorMessage += ` (${error.message})`;
+          }
+          
+          // 이미지 업로드 실패 시 사용자에게 알림
+          const continueWithoutImage = window.confirm(
+            `${errorMessage}\n\n이미지 없이 챗봇을 생성하시겠습니까?`
+          );
+          
+          if (continueWithoutImage) {
+            console.log('이미지 없이 챗봇 생성 진행');
+            imageId = undefined;
+            imageCategory = 'default';
+          } else {
+            setError(errorMessage);
+            return;
+          }
+        }
+      } else if (aIGeneratedImageId && aIGeneratedImageUrl) {
+        // AI 생성된 이미지가 있는 경우
+        imageId = aIGeneratedImageId;
+        imageCategory = 'ai';
+        console.log('AI 생성된 이미지 사용:', { imageId, imageUrl: aIGeneratedImageUrl });
+      }
+
       // 챗봇 생성 요청 데이터
       const chatbotData = {
         name: characterName.trim(),
         details: additionalDescription.trim() || `${characterName.trim()}와의 대화를 시작합니다.`,
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
-        image_id: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
+        image_category: imageCategory,
+        image_id: imageId,
       };
-
-      if (!token) {
-        throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
-      }
       
       console.log('챗봇 생성 요청 데이터:', chatbotData);
       console.log('토큰:', token);
@@ -150,10 +270,16 @@ function MakeCharacterPage() {
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
         details: additionalDescription.trim(),
-        image_id: selectedImage ? 'custom' : 'default',
-        imagePreview: imagePreview
+        image_category: imageCategory,
+        image_id: imageId,
+        imagePreview: selectedImage ? imagePreview : (aIGeneratedImageUrl || undefined)
       });
       setShowCharacterInfo(true);
+      
+      // 2초 후 홈 화면으로 자동 이동
+      setTimeout(() => {
+        navigate({ to: '/home' });
+      }, 2000);
       
     } catch (error) {
       setError(error instanceof Error ? error.message : '챗봇 생성에 실패했습니다');
@@ -501,16 +627,27 @@ function MakeCharacterPage() {
                   setShowAIModal(false);
                   setAppearanceDescription('');
                 }}
-                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition-colors"
+                disabled={isLoading}
+                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 취소
               </button>
               <button
                 onClick={handleAISubmit}
-                disabled={!appearanceDescription.trim()}
-                className="flex-1 px-4 py-2 bg-[#8E8EE7] text-white font-medium rounded-lg hover:bg-[#7A7AD8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!appearanceDescription.trim() || isLoading}
+                className="flex-1 px-4 py-2 bg-[#8E8EE7] text-white font-medium rounded-lg hover:bg-[#7A7AD8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                생성
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    생성 중...
+                  </>
+                ) : (
+                  '생성'
+                )}
               </button>
             </div>
           </div>
@@ -569,6 +706,20 @@ function MakeCharacterPage() {
               </div>
             )}
             
+            {/* 성공 메시지 */}
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800 text-center">
+                ✅ 챗봇이 성공적으로 생성되었습니다!
+              </p>
+            </div>
+            
+            {/* 자동 이동 안내 */}
+            <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-xs text-blue-600 text-center">
+                ⏰ 2초 후 홈 화면으로 자동 이동됩니다
+              </p>
+            </div>
+            
             {/* 채팅 시작 버튼 */}
             <div className="flex justify-center">
               <button
@@ -579,7 +730,7 @@ function MakeCharacterPage() {
                 }}
                 className="w-full px-8 py-4 bg-[#8E8EE7] text-white rounded-xl font-medium hover:bg-[#7A7AD8] transition-all duration-300 transform hover:scale-105 text-lg"
               >
-                채팅 시작
+                지금 채팅 시작
               </button>
             </div>
           </div>

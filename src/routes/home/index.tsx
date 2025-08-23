@@ -70,7 +70,6 @@ function RouteComponent() {
   const handleLogout = async () => {
     try {
       await logout();
-      // 로그아웃 후 AuthPage로 리다이렉트 (ProtectedRoute가 자동으로 처리)
     } catch (error) {
       console.error('로그아웃 오류:', error);
     }
@@ -79,6 +78,7 @@ function RouteComponent() {
   const handleNewChatClick = () => {
     navigate({ to: '/home/newChat' });
   };
+
 
   // 챗봇 클릭 시 채팅 페이지로 이동 (전체 챗봇 정보 전달)
   const handleChatbotClick = (chatbot: any) => {
@@ -95,13 +95,16 @@ function RouteComponent() {
   };
 
   // 챗봇 이미지를 반환하는 함수
+
   const getChatbotImage = (chatbot: any) => {
-    if (chatbot.image_id === 'custom' && chatbot.image_url) {
-      return chatbot.image_url; // 직접 등록한 이미지가 있는 경우
-    } else if (chatbot.image_id === 'ai' && chatbot.ai_generated_image) {
-      return chatbot.ai_generated_image; // AI 생성 이미지가 있는 경우
+    if (chatbot.image_url) {
+      return chatbot.image_url;
+    } else if (chatbot.image_id) {
+      return '/Checker.png';
+    } else if (chatbot.image_category === 'ai' && chatbot.ai_generated_image) {
+      return chatbot.ai_generated_image;
     } else {
-      return '/Checker.png'; // 기본 이미지
+      return '/Checker.png';
     }
   };
 
@@ -124,7 +127,6 @@ function RouteComponent() {
     <ProtectedRoute>
       <div>
         <div className="bg-[#fbf5ff] text-center h-screen p-4">
-          {/* Header with Logout Button */}
           <div className="flex justify-between items-center mb-4">
             <div className="text-[#8e8ee7] font-['Pretendard'] font-extrabold text-2xl leading-9 tracking-0 text-left">
               HOME
@@ -137,7 +139,6 @@ function RouteComponent() {
             </button>
           </div>
           
-          {/* MY Profile Container */}
           <div className="bg-white w-full h-[111px] opacity-100 gap-1 rounded-[20px] p-3 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.1)]">
             <div className="text-[#727272] w-[21px] h-[17px] opacity-100 font-['Pretendard'] font-normal text-sm leading-[100%] tracking-[0%] text-left align-middle">
               MY
@@ -151,26 +152,28 @@ function RouteComponent() {
             </div>
           </div>
           
-          {/* CHATS Container */}
           <div className="mt-4 bg-white w-full opacity-100 gap-1 rounded-[20px] p-3 shadow-[0px_3px_4px_0px_rgba(0,0,0,0.1)] mb-20">
             <div className="text-[#727272] w-[21px] h-[17px] opacity-100 font-['Pretendard'] font-normal text-sm leading-[100%] tracking-[0%] text-left align-middle">
               CHATS
             </div>
             
-            {/* Chat Items - 실제 챗봇 데이터 사용 */}
             {chatbots && chatbots.length > 0 ? (
-              chatbots.map((chatbot) => (
+
+              chatbots.map((chatbot, index) => (
                 <div 
                   key={chatbot.uuid} 
-                  className="mt-2 flex justify-between items-start w-full min-h-[66px] py-2 px-1 gap-2.5 rounded-[20px] cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px] hover:bg-gray-50 transition-all duration-200 cursor-pointer"
                   onClick={() => handleChatbotClick(chatbot)}
+                  style={{
+                    animation: `slideIn 0.3s ease-out ${index * 0.1}s both`
+                  }}
+
                 >
                   <img 
                     src={getChatbotImage(chatbot)} 
                     alt={`${chatbot.name} 프로필`} 
                     className="w-[50px] h-[50px] transform rotate-0 opacity-100 rounded-[48px] object-cover"
                     onError={(e) => {
-                      // 이미지 로드 실패 시 기본 이미지로 대체
                       const target = e.target as HTMLImageElement;
                       target.src = '/Checker.png';
                     }}
@@ -195,13 +198,11 @@ function RouteComponent() {
                 </div>
               ))
             ) : (
-              // 챗봇이 없을 때 기본 메시지
               <div className="flex justify-center items-center h-[66px] text-gray-500 text-sm">
                 아직 생성된 챗봇이 없습니다
               </div>
             )}
             
-            {/* New Chat Button */}
             <div className="mt-5">
               <button
                 onClick={handleNewChatClick}
@@ -213,12 +214,27 @@ function RouteComponent() {
             </div>
           </div>
           
-          {/* Navigation Bar - iPhone 16 너비에 맞게 하단 고정 */}
           <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[390px] max-w-[90vw] z-40">
             <Navbar />
           </div>
         </div>
+        
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            @keyframes slideIn {
+              from {
+                opacity: 0;
+                transform: translateX(-20px);
+              }
+              to {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
+          `
+        }} />
       </div>
     </ProtectedRoute>
   );
 }
+
