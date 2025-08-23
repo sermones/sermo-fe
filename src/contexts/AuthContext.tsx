@@ -193,7 +193,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     try {
       const chatbots = await authAPI.getChatbots(state.token);
-      dispatch({ type: 'SET_CHATBOTS', payload: chatbots });
+      
+      // 각 챗봇의 이미지 URL을 가져와서 업데이트
+      const chatbotsWithImages = await Promise.all(
+        chatbots.map(async (chatbot) => {
+          if (chatbot.image_id && chatbot.image_id !== 'default' && chatbot.image_id !== 'ai') {
+            try {
+              const imageResponse = await authAPI.getImage(state.token!, chatbot.image_id);
+              return {
+                ...chatbot,
+                image_url: imageResponse.url
+              };
+            } catch (error) {
+              console.error(`이미지 ${chatbot.image_id} 조회 실패:`, error);
+              return chatbot;
+            }
+          }
+          return chatbot;
+        })
+      );
+      
+      dispatch({ type: 'SET_CHATBOTS', payload: chatbotsWithImages });
     } catch (error) {
       console.error('챗봇 목록 조회 오류:', error);
     }
@@ -205,7 +225,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await authAPI.createChatbot(state.token, chatbotData);
       console.log('챗봇 생성 성공:', response);
       
-      // 새로 생성된 챗봇을 목록에 추가
+            // 새로 생성된 챗봇을 목록에 추가
       const newChatbot: Chatbot = {
         uuid: response.chatbot_id,
         name: chatbotData.name,
@@ -214,10 +234,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         hashtags: chatbotData.hashtags,
         image_id: chatbotData.image_id,
         created_at: new Date().toISOString(),
-              // 이미지 정보 추가 - imagePreview가 있으면 사용, 없으면 기본값
-      image_url: chatbotData.image_id === 'custom' && chatbotData.imagePreview ? chatbotData.imagePreview : undefined,
-      ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
-    };
+        // image_id만 저장하고, 나중에 fetchChatbots에서 실제 URL을 가져옴
+        image_url: undefined,
+        ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
+      };
     
     console.log('새로 생성된 챗봇:', {
       name: newChatbot.name,
