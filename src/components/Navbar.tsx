@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -10,6 +10,7 @@ interface NavItem {
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('home');
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -41,17 +42,42 @@ export const Navbar: React.FC = () => {
     {
       id: 'achievement',
       label: '성과',
-      path: '/home',
+      path: '/home/achievement',
       icon: (
         <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
       ),
     },
   ], []);
 
+  // 현재 경로에 맞는 탭을 자동으로 활성화
+  useEffect(() => {
+    const currentPath = location.pathname;
+    
+    // 정확한 경로 매칭 시도
+    let matchingItem = navItems.find(item => item.path === currentPath);
+    
+    // 정확한 매칭이 없으면 경로 포함 여부로 매칭
+    if (!matchingItem) {
+      if (currentPath.startsWith('/home/practice')) {
+        matchingItem = navItems.find(item => item.id === 'practice');
+      } else if (currentPath.startsWith('/home/quests')) {
+        matchingItem = navItems.find(item => item.id === 'quests');
+      } else if (currentPath.startsWith('/home/achievement')) {
+        matchingItem = navItems.find(item => item.id === 'achievement');
+      } else if (currentPath.startsWith('/home')) {
+        matchingItem = navItems.find(item => item.id === 'home');
+      }
+    }
+    
+    if (matchingItem) {
+      const newIndex = navItems.findIndex(nav => nav.id === matchingItem.id);
+      setActiveTab(matchingItem.id);
+      setActiveIndex(newIndex);
+    }
+  }, [location.pathname, navItems]);
+
   const handleTabClick = (item: NavItem) => {
-    setActiveTab(item.id);
-    setActiveIndex(navItems.findIndex(nav => nav.id === item.id));
-    //navigate({ to: item.path });
+    navigate({ to: item.path });
   };
 
   return (

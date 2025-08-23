@@ -16,6 +16,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as HomeQuestsImport } from './routes/home/quests'
 import { Route as HomePracticeImport } from './routes/home/practice'
+import { Route as HomeAchievementImport } from './routes/home/achievement'
 import { Route as HomeNewChatIndexImport } from './routes/home/newChat/index'
 import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/makeCharacter'
 
@@ -51,6 +52,12 @@ const HomePracticeRoute = HomePracticeImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const HomeAchievementRoute = HomeAchievementImport.update({
+  id: '/home/achievement',
+  path: '/home/achievement',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const HomeNewChatIndexRoute = HomeNewChatIndexImport.update({
   id: '/home/newChat/',
   path: '/home/newChat/',
@@ -79,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/home/achievement': {
+      id: '/home/achievement'
+      path: '/home/achievement'
+      fullPath: '/home/achievement'
+      preLoaderRoute: typeof HomeAchievementImport
       parentRoute: typeof rootRoute
     }
     '/home/practice': {
@@ -124,6 +138,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/home/achievement': typeof HomeAchievementRoute
   '/home/practice': typeof HomePracticeRoute
   '/home/quests': typeof HomeQuestsRoute
   '/home': typeof HomeIndexRoute
@@ -134,6 +149,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/home/achievement': typeof HomeAchievementRoute
   '/home/practice': typeof HomePracticeRoute
   '/home/quests': typeof HomeQuestsRoute
   '/home': typeof HomeIndexRoute
@@ -145,6 +161,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/home/achievement': typeof HomeAchievementRoute
   '/home/practice': typeof HomePracticeRoute
   '/home/quests': typeof HomeQuestsRoute
   '/home/': typeof HomeIndexRoute
@@ -157,6 +174,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/home/achievement'
     | '/home/practice'
     | '/home/quests'
     | '/home'
@@ -166,6 +184,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/home/achievement'
     | '/home/practice'
     | '/home/quests'
     | '/home'
@@ -175,6 +194,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/home/achievement'
     | '/home/practice'
     | '/home/quests'
     | '/home/'
@@ -186,6 +206,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  HomeAchievementRoute: typeof HomeAchievementRoute
   HomePracticeRoute: typeof HomePracticeRoute
   HomeQuestsRoute: typeof HomeQuestsRoute
   HomeIndexRoute: typeof HomeIndexRoute
@@ -196,6 +217,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  HomeAchievementRoute: HomeAchievementRoute,
   HomePracticeRoute: HomePracticeRoute,
   HomeQuestsRoute: HomeQuestsRoute,
   HomeIndexRoute: HomeIndexRoute,
@@ -215,6 +237,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/auth",
+        "/home/achievement",
         "/home/practice",
         "/home/quests",
         "/home/",
@@ -227,6 +250,9 @@ export const routeTree = rootRoute
     },
     "/auth": {
       "filePath": "auth.tsx"
+    },
+    "/home/achievement": {
+      "filePath": "home/achievement.tsx"
     },
     "/home/practice": {
       "filePath": "home/practice.jsx"
