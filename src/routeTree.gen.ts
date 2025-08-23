@@ -23,6 +23,7 @@ import { Route as PracticeMyWordImport } from './routes/practice/myWord'
 import { Route as PracticeMySentenceImport } from './routes/practice/mySentence'
 import { Route as HomeNewChatIndexImport } from './routes/home/newChat/index'
 import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/makeCharacter'
+import { Route as HomeNewChatChooseCharacterImport } from './routes/home/newChat/chooseCharacter'
 
 // Create/Update Routes
 
@@ -98,6 +99,14 @@ const HomeNewChatMakeCharacterRoute = HomeNewChatMakeCharacterImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const HomeNewChatChooseCharacterRoute = HomeNewChatChooseCharacterImport.update(
+  {
+    id: '/home/newChat/chooseCharacter',
+    path: '/home/newChat/chooseCharacter',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -172,6 +181,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PracticeIndexImport
       parentRoute: typeof rootRoute
     }
+    '/home/newChat/chooseCharacter': {
+      id: '/home/newChat/chooseCharacter'
+      path: '/home/newChat/chooseCharacter'
+      fullPath: '/home/newChat/chooseCharacter'
+      preLoaderRoute: typeof HomeNewChatChooseCharacterImport
+      parentRoute: typeof rootRoute
+    }
     '/home/newChat/makeCharacter': {
       id: '/home/newChat/makeCharacter'
       path: '/home/newChat/makeCharacter'
@@ -202,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/practice': typeof PracticeIndexRoute
+  '/home/newChat/chooseCharacter': typeof HomeNewChatChooseCharacterRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat': typeof HomeNewChatIndexRoute
 }
@@ -217,6 +234,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatIndexRoute
   '/home': typeof HomeIndexRoute
   '/practice': typeof PracticeIndexRoute
+  '/home/newChat/chooseCharacter': typeof HomeNewChatChooseCharacterRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat': typeof HomeNewChatIndexRoute
 }
@@ -233,6 +251,7 @@ export interface FileRoutesById {
   '/chat/': typeof ChatIndexRoute
   '/home/': typeof HomeIndexRoute
   '/practice/': typeof PracticeIndexRoute
+  '/home/newChat/chooseCharacter': typeof HomeNewChatChooseCharacterRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat/': typeof HomeNewChatIndexRoute
 }
@@ -250,6 +269,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/home'
     | '/practice'
+    | '/home/newChat/chooseCharacter'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   fileRoutesByTo: FileRoutesByTo
@@ -264,6 +284,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/home'
     | '/practice'
+    | '/home/newChat/chooseCharacter'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   id:
@@ -278,6 +299,7 @@ export interface FileRouteTypes {
     | '/chat/'
     | '/home/'
     | '/practice/'
+    | '/home/newChat/chooseCharacter'
     | '/home/newChat/makeCharacter'
     | '/home/newChat/'
   fileRoutesById: FileRoutesById
@@ -294,6 +316,7 @@ export interface RootRouteChildren {
   ChatIndexRoute: typeof ChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
   PracticeIndexRoute: typeof PracticeIndexRoute
+  HomeNewChatChooseCharacterRoute: typeof HomeNewChatChooseCharacterRoute
   HomeNewChatMakeCharacterRoute: typeof HomeNewChatMakeCharacterRoute
   HomeNewChatIndexRoute: typeof HomeNewChatIndexRoute
 }
@@ -309,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatIndexRoute: ChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
   PracticeIndexRoute: PracticeIndexRoute,
+  HomeNewChatChooseCharacterRoute: HomeNewChatChooseCharacterRoute,
   HomeNewChatMakeCharacterRoute: HomeNewChatMakeCharacterRoute,
   HomeNewChatIndexRoute: HomeNewChatIndexRoute,
 }
@@ -333,6 +357,7 @@ export const routeTree = rootRoute
         "/chat/",
         "/home/",
         "/practice/",
+        "/home/newChat/chooseCharacter",
         "/home/newChat/makeCharacter",
         "/home/newChat/"
       ]
@@ -366,6 +391,9 @@ export const routeTree = rootRoute
     },
     "/practice/": {
       "filePath": "practice/index.tsx"
+    },
+    "/home/newChat/chooseCharacter": {
+      "filePath": "home/newChat/chooseCharacter.tsx"
     },
     "/home/newChat/makeCharacter": {
       "filePath": "home/newChat/makeCharacter.tsx"

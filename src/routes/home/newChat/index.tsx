@@ -13,8 +13,7 @@ function NewChatPage() {
   };
 
   const handleChooseCharacter = () => {
-    // TODO: 캐릭터 고르기 페이지로 이동
-    console.log('캐릭터 고르기 선택');
+    navigate({ to: '/home/newChat/chooseCharacter' });
   };
 
   const handleCreateCharacter = () => {
