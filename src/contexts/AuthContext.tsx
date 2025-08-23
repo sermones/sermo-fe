@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { AuthState, LoginRequest, RegisterRequest, User, Chatbot, CreateChatbotRequest } from '../types/auth';
 import { authAPI } from '../api/auth';
+import { getFCMToken } from '../firebase';
 
 // 초기 상태
 const initialState: AuthState = {
@@ -178,6 +179,35 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       console.log('✅ AuthContext 상태 업데이트 완료');
+      
+      // FCM 토큰 발급 및 전송
+      try {
+        console.log('🔄 FCM 토큰 발급 시작...');
+        const fcmToken = await getFCMToken();
+        
+        if (fcmToken) {
+          console.log('✅ FCM 토큰 발급 성공, BE 서버로 전송 중...');
+          const fcmTokenSent = await sendFCMTokenToServer(fcmToken, response.token);
+          
+          if (fcmTokenSent) {
+            console.log('✅ FCM 토큰 전송 성공');
+            localStorage.setItem('fcmToken', fcmToken);
+          } else {
+            console.error('❌ FCM 토큰 전송 실패');
+            alert('FCM 토큰 전송에 실패했습니다. 다시 시도해주세요.');
+            throw new Error('FCM 토큰 전송 실패');
+          }
+        } else {
+          console.error('❌ FCM 토큰 발급 실패');
+          alert('FCM 토큰 발급에 실패했습니다. 다시 시도해주세요.');
+          throw new Error('FCM 토큰 발급 실패');
+        }
+      } catch (error) {
+        console.error('❌ FCM 토큰 처리 중 에러:', error);
+        alert('FCM 토큰 처리에 실패했습니다. 다시 시도해주세요.');
+        throw error;
+      }
+      
       await fetchChatbots();
 
     } catch (error) {
@@ -223,6 +253,33 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // 에러 클리어
   const clearError = () => {
     dispatch({ type: 'CLEAR_ERROR' });
+  };
+
+  // FCM 토큰을 BE 서버로 전송하는 함수
+  const sendFCMTokenToServer = async (fcmToken: string, authToken: string) => {
+    try {
+      const response = await fetch('http://localhost:3000/fcm/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          device_info: 'web-app',
+          fcm_token: fcmToken
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`FCM 토큰 전송 실패: ${response.status}`);
+      }
+
+      console.log('FCM 토큰 전송 성공');
+      return true;
+    } catch (error) {
+      console.error('FCM 토큰 전송 중 에러:', error);
+      return false;
+    }
   };
 
   // 챗봇 목록 가져오기
