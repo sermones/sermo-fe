@@ -138,12 +138,6 @@ function RouteComponent() {
           </div>
           <div className="sh-chatsprofile-container">
             <div className="sh-profile-title">RECORDS</div>
-            <button className="sh-profile" onClick={() => console.log('북마크 클릭')}>
-              <img src="/records_1.svg" alt="bookmarks" className="sh-round-image" />
-              <div className="sh-wrap">
-                <div className="sh-profile-name">학습 통계</div>
-              </div>
-            </button>
             <button className="sh-profile" onClick={handleStartMyWord}>
               <img src="/books.svg" alt="learning report" className="sh-round-image" />
               <div className="sh-wrap">

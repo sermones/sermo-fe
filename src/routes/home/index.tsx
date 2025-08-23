@@ -127,13 +127,13 @@ function RouteComponent() {
     <ProtectedRoute>
       <div>
         <div className="bg-[#fbf5ff] text-center h-screen p-4">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-6">
             <div className="text-[#8e8ee7] font-['Pretendard'] font-extrabold text-2xl leading-9 tracking-0 text-left">
               HOME
             </div>
             <button
               onClick={handleLogout}
-              className="bg-red-300 text-white px-4 py-2 rounded-lg hover:bg-red-400 transition-colors text-sm font-bold"
+              className="bg-pink-300 text-white px-4 py-2 rounded-lg hover:bg-pink-400 transition-colors text-sm font-medium shadow-sm"
             >
               Logout
             </button>
