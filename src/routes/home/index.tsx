@@ -3,6 +3,7 @@ import { Navbar } from '../../components/Navbar';
 import { useAuth } from '../../contexts/AuthContext';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/home/')({
   component: RouteComponent,
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/home/')({
 
 function RouteComponent() {
   const { user, logout, chatbots, fetchChatbots } = useAuth();
+  const navigate = useNavigate();
 
   // 컴포넌트 마운트 시 챗봇 목록 가져오기
   useEffect(() => {
@@ -23,6 +25,10 @@ function RouteComponent() {
     } catch (error) {
       console.error('로그아웃 오류:', error);
     }
+  };
+
+  const handleNewChatClick = () => {
+    navigate({ to: '/home/newChat' });
   };
 
   return (
@@ -86,7 +92,10 @@ function RouteComponent() {
             
             {/* New Chat Button */}
             <div className="mt-5">
-              <button className="mx-auto bg-[#f5f5f5] px-6 py-2 rounded-[6px] border-1 border-[#8E8EE7] hover:bg-[#e8e8e8] transition-colors flex items-center justify-center gap-2">
+              <button
+                onClick={handleNewChatClick}
+                className="mx-auto bg-[#f5f5f5] px-6 py-2 rounded-[6px] border-1 border-[#8E8EE7] hover:bg-[#e8e8e8] transition-colors flex items-center justify-center gap-2"
+              >
                 <img src="/chat_plus.svg" alt="new chat" className="w-5 h-5" />
                 <span className="text-[#8E8EE7] font-['Pretendard'] font-normal text-sm leading-[100%] tracking-[0%]">새 채팅</span>
               </button>

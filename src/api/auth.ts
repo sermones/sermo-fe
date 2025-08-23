@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, User, Chatbot } from '../types/auth';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, User, Chatbot, CreateChatbotRequest, CreateChatbotResponse } from '../types/auth';
 
 // TODO: 백엔드 API 주소를 실제 주소로 변경
 const API_BASE_URL = 'http://localhost:3000';
@@ -71,6 +71,24 @@ export const authAPI = {
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || '챗봇 목록 조회에 실패했습니다');
+    }
+
+    return response.json();
+  },
+
+  async createChatbot(token: string, chatbotData: CreateChatbotRequest): Promise<CreateChatbotResponse> {
+    const response = await fetch(`${API_BASE_URL}/chatbot`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(chatbotData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || '챗봇 생성에 실패했습니다');
     }
 
     return response.json();

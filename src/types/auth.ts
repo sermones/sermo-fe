@@ -40,6 +40,19 @@ export interface Chatbot {
   created_at: string;
 }
 
+export interface CreateChatbotRequest {
+  name: string;
+  details: string;
+  gender: string;
+  hashtags: string[];
+  image_id: string;
+}
+
+export interface CreateChatbotResponse {
+  chatbot_id: string;
+  message: string;
+}
+
 // 인증 상태 타입
 export interface AuthState {
   user: User | null;
