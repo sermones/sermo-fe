@@ -214,8 +214,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         hashtags: chatbotData.hashtags,
         image_id: chatbotData.image_id,
         created_at: new Date().toISOString(),
-        // 이미지 정보 추가 (실제 구현에서는 백엔드에서 반환)
-        image_url: chatbotData.image_id === 'custom' ? '/custom-avatar.png' : undefined,
+        // 이미지 정보 추가 - imagePreview가 있으면 사용, 없으면 기본값
+        image_url: chatbotData.image_id === 'custom' && chatbotData.imagePreview ? chatbotData.imagePreview : undefined,
         ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
       };
       

@@ -48,6 +48,7 @@ export interface CreateChatbotRequest {
   gender: string;
   hashtags: string[];
   image_id: string;
+  imagePreview?: string; // 직접 업로드한 이미지의 Base64 데이터
 }
 
 export interface CreateChatbotResponse {
