@@ -25,10 +25,10 @@ export const UserProfile: React.FC = () => {
       >
         <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
           <span className="text-white text-sm font-medium">
-            {user.name.charAt(0).toUpperCase()}
+            {user.nickname.charAt(0).toUpperCase()}
           </span>
         </div>
-        <span className="text-gray-700 font-medium hidden sm:block">{user.name}</span>
+        <span className="text-gray-700 font-medium hidden sm:block">{user.nickname}</span>
         <svg
           className={`w-4 h-4 text-gray-500 transition-transform ${
             showDropdown ? 'rotate-180' : ''
@@ -54,8 +54,7 @@ export const UserProfile: React.FC = () => {
           <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-200">
             {/* 사용자 정보 */}
             <div className="px-4 py-2 border-b border-gray-100">
-              <p className="text-sm font-medium text-gray-900">{user.name}</p>
-              <p className="text-xs text-gray-500">{user.email}</p>
+              <p className="text-sm font-medium text-gray-900">{user.nickname}</p>
             </div>
 
             {/* 메뉴 항목들 */}

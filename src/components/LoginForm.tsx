@@ -10,7 +10,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const { login, error, clearError, isLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    id: '',
     password: '',
   });
 
@@ -20,8 +20,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
 
     try {
       await login(formData);
-      // 로그인 성공 시 홈으로 리다이렉트
-      navigate({ to: '/' });
+      // 로그인 성공 시 home으로 리다이렉트
+      navigate({ to: '/home' });
     } catch (error) {
       // 에러는 이미 context에서 처리됨
     }
@@ -39,7 +39,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
       <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 border border-white/20">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">로그인</h2>
-          <p className="text-gray-600 text-sm"><span className="font-bold">Sermo</span>와 함께하는 일상을 시작하세요</p>
+          <p className="text-gray-600 text-sm">부담 없는 나만의 영어 친구, <span className="font-bold text-purple-500">Sermo</span></p>
         </div>
 
         {error && (
@@ -50,18 +50,18 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-2">
               이메일
             </label>
             <div className="relative">
               <input
                 type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                id="id"
+                name="id"
+                value={formData.id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-[#4A90E2] transition-all duration-200 bg-white/80"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80"
                 placeholder="your@email.com"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -84,7 +84,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-[#4A90E2] transition-all duration-200 bg-white/80"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80"
                 placeholder="••••••••"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -98,7 +98,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-[#4A90E2] to-[#0055A7] hover:from-[#0055A7] hover:to-[#4A90E2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4A90E2] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
           >
             {isLoading ? (
               <div className="flex items-center">
@@ -117,7 +117,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
             <button
               type="button"
               onClick={onSwitchToRegister}
-              className="font-medium text-[#4A90E2] hover:text-[#0055A7] transition-colors"
+              className="font-medium text-purple-600 hover:text-purple-700 transition-colors"
             >
               회원가입
             </button>

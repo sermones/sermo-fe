@@ -7,29 +7,24 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
-  const { register, error, clearError, isLoading } = useAuth();
+  const { signup, error, clearError, isLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
+    nickname: '',
+    id: '',
     password: '',
-    confirmPassword: '',
   });
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
 
-    if (formData.name.trim().length < 2) {
-      errors.name = '이름은 2자 이상이어야 합니다';
+    if (formData.nickname.trim().length < 2) {
+      errors.nickname = '닉네임은 2자 이상이어야 합니다';
     }
 
     if (formData.password.length < 6) {
       errors.password = '비밀번호는 6자 이상이어야 합니다';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = '비밀번호가 일치하지 않습니다';
     }
 
     setValidationErrors(errors);
@@ -45,9 +40,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
     }
 
     try {
-      await register(formData);
-      // 회원가입 성공 후 자동 로그인되어 홈으로 리다이렉트
-      navigate({ to: '/' });
+      await signup(formData);
+      // 회원가입 성공 후 자동 로그인되어 home으로 리다이렉트
+      navigate({ to: '/home' });
     } catch (error) {
       // 에러는 이미 context에서 처리됨
     }
@@ -84,21 +79,21 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-              이름
+            <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-2">
+              닉네임
             </label>
             <div className="relative">
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="nickname"
+                name="nickname"
+                value={formData.nickname}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-[#4A90E2] transition-all duration-200 bg-white/80 ${
-                  validationErrors.name ? 'border-red-300' : 'border-gray-200'
+                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80 ${
+                  validationErrors.nickname ? 'border-red-300' : 'border-gray-200'
                 }`}
-                placeholder="홍길동"
+                placeholder="닉네임을 입력하세요"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                 <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,24 +101,24 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
                 </svg>
               </div>
             </div>
-            {validationErrors.name && (
-              <p className="mt-1 text-xs text-red-600">{validationErrors.name}</p>
+            {validationErrors.nickname && (
+              <p className="mt-1 text-xs text-red-600">{validationErrors.nickname}</p>
             )}
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-2">
               이메일
             </label>
             <div className="relative">
               <input
                 type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                id="id"
+                name="id"
+                value={formData.id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-[#4A90E2] transition-all duration-200 bg-white/80"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80"
                 placeholder="your@email.com"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -146,7 +141,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-[#4A90E2] transition-all duration-200 bg-white/80 ${
+                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80 ${
                   validationErrors.password ? 'border-red-300' : 'border-gray-200'
                 }`}
                 placeholder="••••••••"
@@ -162,38 +157,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
             )}
           </div>
 
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-              비밀번호 확인
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-[#4A90E2] transition-all duration-200 bg-white/80 ${
-                  validationErrors.confirmPassword ? 'border-red-300' : 'border-gray-200'
-                }`}
-                placeholder="••••••••"
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-            {validationErrors.confirmPassword && (
-              <p className="mt-1 text-xs text-red-600">{validationErrors.confirmPassword}</p>
-            )}
-          </div>
-
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-[#4A90E2] to-[#0055A7] hover:from-[#0055A7] hover:to-[#4A90E2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4A90E2] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
           >
             {isLoading ? (
               <div className="flex items-center">
@@ -212,7 +179,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) =
             <button
               type="button"
               onClick={onSwitchToLogin}
-              className="font-medium text-[#4A90E2] hover:text-[#0055A7] transition-colors"
+              className="font-medium text-purple-600 hover:text-purple-700 transition-colors"
             >
               로그인
             </button>

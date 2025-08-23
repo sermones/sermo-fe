@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthPage } from './AuthPage';
+import { useNavigate } from '@tanstack/react-router';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,6 +13,14 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   fallback = <AuthPage /> 
 }) => {
   const { isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // 인증된 사용자가 로그인 페이지에 접근하면 home으로 리다이렉트
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      navigate({ to: '/home' });
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   if (isLoading) {
     return (
