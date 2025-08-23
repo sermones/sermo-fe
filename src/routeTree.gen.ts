@@ -12,12 +12,13 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as QuestsImport } from './routes/quests'
-import { Route as PracticeImport } from './routes/practice'
-import { Route as AuthImport } from './routes/auth'
 import { Route as AchievementImport } from './routes/achievement'
 import { Route as IndexImport } from './routes/index'
+import { Route as PracticeIndexImport } from './routes/practice/index'
 import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as ChatIndexImport } from './routes/chat/index'
+import { Route as PracticeWordQuizImport } from './routes/practice/wordQuiz'
+import { Route as PracticeSentenceQuizImport } from './routes/practice/sentenceQuiz'
 import { Route as HomeNewChatIndexImport } from './routes/home/newChat/index'
 import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/makeCharacter'
 
@@ -26,18 +27,6 @@ import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/m
 const QuestsRoute = QuestsImport.update({
   id: '/quests',
   path: '/quests',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PracticeRoute = PracticeImport.update({
-  id: '/practice',
-  path: '/practice',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthRoute = AuthImport.update({
-  id: '/auth',
-  path: '/auth',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,6 +42,12 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PracticeIndexRoute = PracticeIndexImport.update({
+  id: '/practice/',
+  path: '/practice/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const HomeIndexRoute = HomeIndexImport.update({
   id: '/home/',
   path: '/home/',
@@ -62,6 +57,18 @@ const HomeIndexRoute = HomeIndexImport.update({
 const ChatIndexRoute = ChatIndexImport.update({
   id: '/chat/',
   path: '/chat/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PracticeWordQuizRoute = PracticeWordQuizImport.update({
+  id: '/practice/wordQuiz',
+  path: '/practice/wordQuiz',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PracticeSentenceQuizRoute = PracticeSentenceQuizImport.update({
+  id: '/practice/sentenceQuiz',
+  path: '/practice/sentenceQuiz',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -95,25 +102,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AchievementImport
       parentRoute: typeof rootRoute
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthImport
-      parentRoute: typeof rootRoute
-    }
-    '/practice': {
-      id: '/practice'
-      path: '/practice'
-      fullPath: '/practice'
-      preLoaderRoute: typeof PracticeImport
-      parentRoute: typeof rootRoute
-    }
     '/quests': {
       id: '/quests'
       path: '/quests'
       fullPath: '/quests'
       preLoaderRoute: typeof QuestsImport
+      parentRoute: typeof rootRoute
+    }
+    '/practice/sentenceQuiz': {
+      id: '/practice/sentenceQuiz'
+      path: '/practice/sentenceQuiz'
+      fullPath: '/practice/sentenceQuiz'
+      preLoaderRoute: typeof PracticeSentenceQuizImport
+      parentRoute: typeof rootRoute
+    }
+    '/practice/wordQuiz': {
+      id: '/practice/wordQuiz'
+      path: '/practice/wordQuiz'
+      fullPath: '/practice/wordQuiz'
+      preLoaderRoute: typeof PracticeWordQuizImport
       parentRoute: typeof rootRoute
     }
     '/chat/': {
@@ -128,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/home'
       fullPath: '/home'
       preLoaderRoute: typeof HomeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/practice/': {
+      id: '/practice/'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof PracticeIndexImport
       parentRoute: typeof rootRoute
     }
     '/home/newChat/makeCharacter': {
@@ -152,11 +166,12 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
-  '/auth': typeof AuthRoute
-  '/practice': typeof PracticeRoute
   '/quests': typeof QuestsRoute
+  '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
+  '/practice/wordQuiz': typeof PracticeWordQuizRoute
   '/chat': typeof ChatIndexRoute
   '/home': typeof HomeIndexRoute
+  '/practice': typeof PracticeIndexRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat': typeof HomeNewChatIndexRoute
 }
@@ -164,11 +179,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
-  '/auth': typeof AuthRoute
-  '/practice': typeof PracticeRoute
   '/quests': typeof QuestsRoute
+  '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
+  '/practice/wordQuiz': typeof PracticeWordQuizRoute
   '/chat': typeof ChatIndexRoute
   '/home': typeof HomeIndexRoute
+  '/practice': typeof PracticeIndexRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat': typeof HomeNewChatIndexRoute
 }
@@ -177,11 +193,12 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
-  '/auth': typeof AuthRoute
-  '/practice': typeof PracticeRoute
   '/quests': typeof QuestsRoute
+  '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
+  '/practice/wordQuiz': typeof PracticeWordQuizRoute
   '/chat/': typeof ChatIndexRoute
   '/home/': typeof HomeIndexRoute
+  '/practice/': typeof PracticeIndexRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat/': typeof HomeNewChatIndexRoute
 }
@@ -191,33 +208,36 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/achievement'
-    | '/auth'
-    | '/practice'
     | '/quests'
+    | '/practice/sentenceQuiz'
+    | '/practice/wordQuiz'
     | '/chat'
     | '/home'
+    | '/practice'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/achievement'
-    | '/auth'
-    | '/practice'
     | '/quests'
+    | '/practice/sentenceQuiz'
+    | '/practice/wordQuiz'
     | '/chat'
     | '/home'
+    | '/practice'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   id:
     | '__root__'
     | '/'
     | '/achievement'
-    | '/auth'
-    | '/practice'
     | '/quests'
+    | '/practice/sentenceQuiz'
+    | '/practice/wordQuiz'
     | '/chat/'
     | '/home/'
+    | '/practice/'
     | '/home/newChat/makeCharacter'
     | '/home/newChat/'
   fileRoutesById: FileRoutesById
@@ -226,11 +246,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementRoute: typeof AchievementRoute
-  AuthRoute: typeof AuthRoute
-  PracticeRoute: typeof PracticeRoute
   QuestsRoute: typeof QuestsRoute
+  PracticeSentenceQuizRoute: typeof PracticeSentenceQuizRoute
+  PracticeWordQuizRoute: typeof PracticeWordQuizRoute
   ChatIndexRoute: typeof ChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
+  PracticeIndexRoute: typeof PracticeIndexRoute
   HomeNewChatMakeCharacterRoute: typeof HomeNewChatMakeCharacterRoute
   HomeNewChatIndexRoute: typeof HomeNewChatIndexRoute
 }
@@ -238,11 +259,12 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementRoute: AchievementRoute,
-  AuthRoute: AuthRoute,
-  PracticeRoute: PracticeRoute,
   QuestsRoute: QuestsRoute,
+  PracticeSentenceQuizRoute: PracticeSentenceQuizRoute,
+  PracticeWordQuizRoute: PracticeWordQuizRoute,
   ChatIndexRoute: ChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
+  PracticeIndexRoute: PracticeIndexRoute,
   HomeNewChatMakeCharacterRoute: HomeNewChatMakeCharacterRoute,
   HomeNewChatIndexRoute: HomeNewChatIndexRoute,
 }
@@ -259,11 +281,12 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/achievement",
-        "/auth",
-        "/practice",
         "/quests",
+        "/practice/sentenceQuiz",
+        "/practice/wordQuiz",
         "/chat/",
         "/home/",
+        "/practice/",
         "/home/newChat/makeCharacter",
         "/home/newChat/"
       ]
@@ -274,20 +297,23 @@ export const routeTree = rootRoute
     "/achievement": {
       "filePath": "achievement.tsx"
     },
-    "/auth": {
-      "filePath": "auth.tsx"
-    },
-    "/practice": {
-      "filePath": "practice.tsx"
-    },
     "/quests": {
       "filePath": "quests.tsx"
+    },
+    "/practice/sentenceQuiz": {
+      "filePath": "practice/sentenceQuiz.tsx"
+    },
+    "/practice/wordQuiz": {
+      "filePath": "practice/wordQuiz.tsx"
     },
     "/chat/": {
       "filePath": "chat/index.tsx"
     },
     "/home/": {
       "filePath": "home/index.tsx"
+    },
+    "/practice/": {
+      "filePath": "practice/index.tsx"
     },
     "/home/newChat/makeCharacter": {
       "filePath": "home/newChat/makeCharacter.tsx"
