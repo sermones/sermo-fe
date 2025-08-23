@@ -155,6 +155,52 @@ export const authAPI = {
     return result;
   },
 
+  // AI 이미지 생성 함수
+  async generateAIImage(token: string, prompt: string, style?: string): Promise<{ 
+    image_ids: string[]; 
+    message: string; 
+  }> {
+    if (!token) {
+      throw new Error('토큰이 없습니다. 다시 로그인해주세요.');
+    }
+
+    const requestBody = {
+      prompt: prompt,
+      ...(style && { style: style })
+    };
+
+    console.log('AI 이미지 생성 요청:', {
+      url: `${API_BASE_URL}/image/generate`,
+      prompt: prompt,
+      style: style
+    });
+
+    const response = await fetch(`${API_BASE_URL}/image/generate`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': `application/json`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    console.log('AI 이미지 생성 응답:', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries())
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: '알 수 없는 오류' }));
+      console.error('AI 이미지 생성 실패 응답:', errorData);
+      throw new Error(errorData.message || `AI 이미지 생성에 실패했습니다. (${response.status})`);
+    }
+
+    const result = await response.json();
+    console.log('AI 이미지 생성 성공:', result);
+    return result;
+  },
+
   // 이미지 조회 함수
   async getImage(token: string, imageId: string): Promise<{ 
     url: string;
