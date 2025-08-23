@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
+import { Route as ChatIndexImport } from './routes/chat/index'
 import { Route as HomeQuestsImport } from './routes/home/quests'
 import { Route as HomePracticeImport } from './routes/home/practice'
 
@@ -34,6 +35,12 @@ const IndexRoute = IndexImport.update({
 const HomeIndexRoute = HomeIndexImport.update({
   id: '/home/',
   path: '/home/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ChatIndexRoute = ChatIndexImport.update({
+  id: '/chat/',
+  path: '/chat/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -81,6 +88,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeQuestsImport
       parentRoute: typeof rootRoute
     }
+    '/chat/': {
+      id: '/chat/'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/home/': {
       id: '/home/'
       path: '/home'
@@ -98,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/home/practice': typeof HomePracticeRoute
   '/home/quests': typeof HomeQuestsRoute
+  '/chat': typeof ChatIndexRoute
   '/home': typeof HomeIndexRoute
 }
 
@@ -106,6 +121,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/home/practice': typeof HomePracticeRoute
   '/home/quests': typeof HomeQuestsRoute
+  '/chat': typeof ChatIndexRoute
   '/home': typeof HomeIndexRoute
 }
 
@@ -115,15 +131,29 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/home/practice': typeof HomePracticeRoute
   '/home/quests': typeof HomeQuestsRoute
+  '/chat/': typeof ChatIndexRoute
   '/home/': typeof HomeIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/home/practice' | '/home/quests' | '/home'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/home/practice'
+    | '/home/quests'
+    | '/chat'
+    | '/home'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/home/practice' | '/home/quests' | '/home'
-  id: '__root__' | '/' | '/auth' | '/home/practice' | '/home/quests' | '/home/'
+  to: '/' | '/auth' | '/home/practice' | '/home/quests' | '/chat' | '/home'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/home/practice'
+    | '/home/quests'
+    | '/chat/'
+    | '/home/'
   fileRoutesById: FileRoutesById
 }
 
@@ -132,6 +162,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   HomePracticeRoute: typeof HomePracticeRoute
   HomeQuestsRoute: typeof HomeQuestsRoute
+  ChatIndexRoute: typeof ChatIndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
 }
 
@@ -140,6 +171,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   HomePracticeRoute: HomePracticeRoute,
   HomeQuestsRoute: HomeQuestsRoute,
+  ChatIndexRoute: ChatIndexRoute,
   HomeIndexRoute: HomeIndexRoute,
 }
 
@@ -157,6 +189,7 @@ export const routeTree = rootRoute
         "/auth",
         "/home/practice",
         "/home/quests",
+        "/chat/",
         "/home/"
       ]
     },
@@ -171,6 +204,9 @@ export const routeTree = rootRoute
     },
     "/home/quests": {
       "filePath": "home/quests.jsx"
+    },
+    "/chat/": {
+      "filePath": "chat/index.tsx"
     },
     "/home/": {
       "filePath": "home/index.tsx"
