@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Navbar } from '../../components/Navbar';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { useState, useEffect } from 'react';
+import '../../style/shStyle.css';
 
 export const Route = createFileRoute('/practice/')({
   component: RouteComponent,
@@ -311,7 +312,6 @@ function RouteComponent() {
                 정말 대단해요!
               </p>
               
-              {/* 임시 이미지 (나중에 수정 가능) */}
               <div className="flex justify-center mb-6">
                 <img src="/waong.svg" alt="waong" className="w-24 h-24" />
               </div>
