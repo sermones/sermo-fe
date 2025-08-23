@@ -1,24 +1,26 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { AuthState, LoginRequest, RegisterRequest, User } from '../types/auth';
+import { AuthState, LoginRequest, RegisterRequest, User, Chatbot } from '../types/auth';
 import { authAPI } from '../api/auth';
 
 // 초기 상태
 const initialState: AuthState = {
   user: null,
-  accessToken: localStorage.getItem('accessToken'),
+  token: localStorage.getItem('token'),
   isAuthenticated: false,
   isLoading: true,
   error: null,
+  chatbots: [],
 };
 
 // 액션 타입
 type AuthAction =
   | { type: 'AUTH_START' }
-  | { type: 'AUTH_SUCCESS'; payload: { user: User; accessToken: string } }
+  | { type: 'AUTH_SUCCESS'; payload: { user: User; token: string } }
   | { type: 'AUTH_FAILURE'; payload: string }
   | { type: 'AUTH_LOGOUT' }
   | { type: 'CLEAR_ERROR' }
-  | { type: 'SET_LOADING'; payload: boolean };
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_CHATBOTS'; payload: Chatbot[] };
 
 // 리듀서
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -33,7 +35,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return {
         ...state,
         user: action.payload.user,
-        accessToken: action.payload.accessToken,
+        token: action.payload.token,
         isAuthenticated: true,
         isLoading: false,
         error: null,
@@ -48,7 +50,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return {
         ...state,
         user: null,
-        accessToken: null,
+        token: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
@@ -63,6 +65,11 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         isLoading: action.payload,
       };
+    case 'SET_CHATBOTS':
+      return {
+        ...state,
+        chatbots: action.payload,
+      };
     default:
       return state;
   }
@@ -74,6 +81,7 @@ interface AuthContextType extends AuthState {
   signup: (userData: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
+  fetchChatbots: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,20 +93,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // 초기 인증 상태 확인
   useEffect(() => {
     const checkAuthStatus = async () => {
-      if (state.accessToken) {
+      if (state.token) {
         try {
-          const user = await authAPI.getCurrentUser(state.accessToken);
+          const user = await authAPI.getCurrentUser(state.token);
           dispatch({
             type: 'AUTH_SUCCESS',
             payload: {
               user,
-              accessToken: state.accessToken,
+              token: state.token,
             },
           });
         } catch (error) {
           // 토큰이 유효하지 않으면 로그아웃
           dispatch({ type: 'AUTH_LOGOUT' });
-          localStorage.removeItem('accessToken');
+          localStorage.removeItem('token');
         }
       } else {
         dispatch({ type: 'SET_LOADING', payload: false });
@@ -110,10 +118,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // 토큰을 로컬 스토리지에 저장
   useEffect(() => {
-    if (state.accessToken) {
-      localStorage.setItem('accessToken', state.accessToken);
+    if (state.token) {
+      localStorage.setItem('token', state.token);
     }
-  }, [state.accessToken]);
+  }, [state.token]);
 
   // 로그인
   const login = async (credentials: LoginRequest) => {
@@ -124,7 +132,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         type: 'AUTH_SUCCESS',
         payload: {
           user: response.user,
-          accessToken: response.accessToken,
+          token: response.token,
         },
       });
     } catch (error) {
@@ -155,14 +163,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // 로그아웃
   const logout = async () => {
     try {
-      if (state.accessToken) {
+      if (state.token) {
         await authAPI.logout();
       }
     } catch (error) {
       console.error('로그아웃 오류:', error);
     } finally {
       dispatch({ type: 'AUTH_LOGOUT' });
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
     }
   };
 
@@ -171,12 +179,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     dispatch({ type: 'CLEAR_ERROR' });
   };
 
+  // 챗봇 목록 가져오기
+  const fetchChatbots = async () => {
+    if (!state.token) return;
+    
+    try {
+      const chatbots = await authAPI.getChatbots(state.token);
+      dispatch({ type: 'SET_CHATBOTS', payload: chatbots });
+    } catch (error) {
+      console.error('챗봇 목록 조회 오류:', error);
+    }
+  };
+
   const value: AuthContextType = {
     ...state,
     login,
     signup,
     logout,
     clearError,
+    fetchChatbots,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

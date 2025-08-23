@@ -46,35 +46,9 @@ function RouteComponent() {
             </div>
           </div>
           
-          {/* Chat Item 2 */}
-          <div className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px]">
-            <img src="/Checker.png" alt="profile" className="w-[50px] h-[50px] transform rotate-0 opacity-100 rounded-[48px]" />
-            <div className="text-left flex-1 h-[47px] gap-1 opacity-100 ml-3">
-              <div className="font-bold font-style-Bold text-xl leading-[100%] tracking-[0%] text-left align-middle w-full h-6 opacity-100 gap-1">
-                dummyName
-              </div>
-              <div className="w-full h-[19px] gap-2 opacity-100">
-                last message
-              </div>
-            </div>
-          </div>
-          
-          {/* Chat Item 3 */}
-          <div className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px]">
-            <img src="/Checker.png" alt="profile" className="w-[50px] h-[50px] transform rotate-0 opacity-100 rounded-[48px]" />
-            <div className="text-left flex-1 h-[47px] gap-1 opacity-100 ml-3">
-              <div className="font-bold font-style-Bold text-xl leading-[100%] tracking-[0%] text-left align-middle w-full h-6 opacity-100 gap-1">
-                dummyName
-              </div>
-              <div className="w-full h-[19px] gap-2 opacity-100">
-                last message
-              </div>
-            </div>
-          </div>
-          
           {/* New Chat Button */}
           <div className="mt-5">
-            <button className="mx-auto bg-[#f5f5f5] px-6 py-2 rounded-[6px] border-2 border-dotted border-[#8E8EE7] hover:bg-[#e8e8e8] transition-colors flex items-center justify-center gap-2">
+            <button className="mx-auto bg-[#f5f5f5] px-6 py-2 rounded-[6px] border-1 border-[#8E8EE7] hover:bg-[#e8e8e8] transition-colors flex items-center justify-center gap-2">
               <img src="/chat_plus.svg" alt="new chat" className="w-5 h-5" />
               <span className="text-[#8E8EE7] font-['Pretendard'] font-normal text-sm leading-[100%] tracking-[0%]">새 채팅</span>
             </button>
