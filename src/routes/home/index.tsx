@@ -35,6 +35,7 @@ function RouteComponent() {
   const getChatbotImage = (chatbot: any) => {
     console.log('getChatbotImage 호출:', {
       name: chatbot.name,
+      image_category: chatbot.image_category,
       image_id: chatbot.image_id,
       image_url: chatbot.image_url,
       ai_generated_image: chatbot.ai_generated_image
@@ -44,7 +45,7 @@ function RouteComponent() {
       // image_url이 있으면 직접 사용 (fetchChatbots에서 가져온 실제 URL)
       console.log('저장된 image_url 사용:', chatbot.image_url);
       return chatbot.image_url;
-    } else if (chatbot.image_id === 'ai' && chatbot.ai_generated_image) {
+    } else if (chatbot.image_category === 'ai' && chatbot.ai_generated_image) {
       console.log('AI 생성 이미지 사용:', chatbot.ai_generated_image);
       return chatbot.ai_generated_image; // AI 생성 이미지가 있는 경우
     } else {

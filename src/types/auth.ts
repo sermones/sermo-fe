@@ -36,9 +36,10 @@ export interface Chatbot {
   details: string;
   gender: string;
   hashtags: string[];
-  image_id: string;
+  image_category: string; // custom, ai, default
+  image_id?: string; // 실제 이미지 ID (custom인 경우)
   created_at: string;
-  image_url?: string; // 직접 등록한 이미지 URL
+  image_url?: string; // 실제 이미지 URL (API 호출 결과)
   ai_generated_image?: string; // AI 생성 이미지 URL
 }
 
@@ -47,8 +48,8 @@ export interface CreateChatbotRequest {
   details: string;
   gender: string;
   hashtags: string[];
-  image_id: string;
-  imagePreview?: string; // 직접 업로드한 이미지의 Base64 데이터
+  image_category: string; // custom, ai, default
+  image_id?: string; // 실제 이미지 ID (custom인 경우)
 }
 
 export interface CreateChatbotResponse {

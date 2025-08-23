@@ -197,7 +197,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // 각 챗봇의 이미지 URL을 가져와서 업데이트
       const chatbotsWithImages = await Promise.all(
         chatbots.map(async (chatbot) => {
-          if (chatbot.image_id && chatbot.image_id !== 'default' && chatbot.image_id !== 'ai') {
+          if (chatbot.image_category === 'custom' && chatbot.image_id) {
             try {
               const imageResponse = await authAPI.getImage(state.token!, chatbot.image_id);
               return {
@@ -225,26 +225,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await authAPI.createChatbot(state.token, chatbotData);
       console.log('챗봇 생성 성공:', response);
       
-            // 새로 생성된 챗봇을 목록에 추가
+                  // 새로 생성된 챗봇을 목록에 추가
       const newChatbot: Chatbot = {
         uuid: response.chatbot_id,
         name: chatbotData.name,
         details: chatbotData.details,
         gender: chatbotData.gender,
         hashtags: chatbotData.hashtags,
-        image_id: chatbotData.image_id,
+        image_category: chatbotData.image_category,
+        image_id: chatbotData.image_id, // 실제 이미지 ID
         created_at: new Date().toISOString(),
-        // image_id만 저장하고, 나중에 fetchChatbots에서 실제 URL을 가져옴
+        // image_url은 나중에 fetchChatbots에서 실제 URL을 가져옴
         image_url: undefined,
-        ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
+        ai_generated_image: chatbotData.image_category === 'ai' ? '/ai-avatar.png' : undefined,
       };
-    
-    console.log('새로 생성된 챗봇:', {
-      name: newChatbot.name,
-      image_id: newChatbot.image_id,
-      image_url: newChatbot.image_url,
-      imagePreview_존재: !!chatbotData.imagePreview
-    });
+      
+      console.log('새로 생성된 챗봇:', {
+        name: newChatbot.name,
+        image_category: newChatbot.image_category,
+        image_id: newChatbot.image_id,
+        image_url: newChatbot.image_url
+      });
     
     // chatbots가 배열인지 확인하고 안전하게 추가
     if (Array.isArray(state.chatbots)) {

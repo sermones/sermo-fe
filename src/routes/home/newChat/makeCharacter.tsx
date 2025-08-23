@@ -132,8 +132,8 @@ function MakeCharacterPage() {
         details: additionalDescription.trim() || `${characterName.trim()}와의 대화를 시작합니다.`,
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
-        image_id: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
-        imagePreview: selectedImage && imagePreview ? imagePreview : undefined,
+        image_category: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
+        image_id: selectedImage && imagePreview ? imagePreview : undefined, // imagePreview를 image_id로 사용
       };
 
       if (!token) {
