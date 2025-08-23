@@ -65,6 +65,23 @@ function RouteComponent() {
     e.dataTransfer.effectAllowed = 'copy';
     e.dataTransfer.setData('text/plain', word);
     
+    // 드래그 이미지 설정 - 기존 박스 형태 그대로
+    const dragImage = e.currentTarget.cloneNode(true) as HTMLElement;
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    dragImage.style.left = '-1000px';
+    dragImage.style.opacity = '0.8';
+    dragImage.style.pointerEvents = 'none';
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 20, 20);
+    
+    // 드래그 이미지 요소를 나중에 제거
+    setTimeout(() => {
+      if (document.body.contains(dragImage)) {
+        document.body.removeChild(dragImage);
+      }
+    }, 100);
+    
     // 드래그한 단어를 draggedWords 배열에 추가
     setDraggedWords(prev => [...prev, word]);
     
@@ -108,8 +125,9 @@ function RouteComponent() {
     
     if (droppedWord === nextCorrectWord) {
       console.log('Correct answer!');
-      // 정답: 단어를 선택된 목록에 추가
+      // 정답: 단어를 선택된 목록에 추가하고 draggedWords에서 제거
       setSelectedWords(prev => [...prev, droppedWord]);
+      setDraggedWords(prev => prev.filter(word => word !== droppedWord));
       
       // 모든 단어를 맞췄는지 확인
       if (selectedWords.length + 1 === correctOrder.length) {

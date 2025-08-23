@@ -9,9 +9,10 @@ export const Route = createFileRoute('/practice/wordQuiz')({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  // URL 파라미터에서 wordCount를 가져오기
+  // URL 파라미터에서 wordCount와 isIncorrectProblems를 가져오기
   const urlParams = new URLSearchParams(window.location.search);
   const wordCount = Number(urlParams.get('wordCount')) || 10;
+  const isIncorrectProblems = urlParams.get('isIncorrectProblems') === 'true';
   
   const [quizWords, setQuizWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -67,7 +68,13 @@ function RouteComponent() {
       setCurrentIndex(currentIndex + 1);
     } else {
       // 모든 퀴즈 완료
-      navigate({ to: '/practice', search: { completedWordCount: wordCount } });
+      if (isIncorrectProblems) {
+        // 틀린 문제 모아보기인 경우: 완료 모달 없이 바로 practice로
+        navigate({ to: '/practice' });
+      } else {
+        // 일반 단어 퀴즈인 경우: 완료 모달과 함께
+        navigate({ to: '/practice', search: { completedWordCount: wordCount } });
+      }
     }
   };
 

@@ -19,6 +19,8 @@ import { Route as HomeIndexImport } from './routes/home/index'
 import { Route as ChatIndexImport } from './routes/chat/index'
 import { Route as PracticeWordQuizImport } from './routes/practice/wordQuiz'
 import { Route as PracticeSentenceQuizImport } from './routes/practice/sentenceQuiz'
+import { Route as PracticeMyWordImport } from './routes/practice/myWord'
+import { Route as PracticeMySentenceImport } from './routes/practice/mySentence'
 import { Route as HomeNewChatIndexImport } from './routes/home/newChat/index'
 import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/makeCharacter'
 
@@ -72,6 +74,18 @@ const PracticeSentenceQuizRoute = PracticeSentenceQuizImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PracticeMyWordRoute = PracticeMyWordImport.update({
+  id: '/practice/myWord',
+  path: '/practice/myWord',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PracticeMySentenceRoute = PracticeMySentenceImport.update({
+  id: '/practice/mySentence',
+  path: '/practice/mySentence',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const HomeNewChatIndexRoute = HomeNewChatIndexImport.update({
   id: '/home/newChat/',
   path: '/home/newChat/',
@@ -107,6 +121,20 @@ declare module '@tanstack/react-router' {
       path: '/quests'
       fullPath: '/quests'
       preLoaderRoute: typeof QuestsImport
+      parentRoute: typeof rootRoute
+    }
+    '/practice/mySentence': {
+      id: '/practice/mySentence'
+      path: '/practice/mySentence'
+      fullPath: '/practice/mySentence'
+      preLoaderRoute: typeof PracticeMySentenceImport
+      parentRoute: typeof rootRoute
+    }
+    '/practice/myWord': {
+      id: '/practice/myWord'
+      path: '/practice/myWord'
+      fullPath: '/practice/myWord'
+      preLoaderRoute: typeof PracticeMyWordImport
       parentRoute: typeof rootRoute
     }
     '/practice/sentenceQuiz': {
@@ -167,6 +195,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
   '/quests': typeof QuestsRoute
+  '/practice/mySentence': typeof PracticeMySentenceRoute
+  '/practice/myWord': typeof PracticeMyWordRoute
   '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
   '/practice/wordQuiz': typeof PracticeWordQuizRoute
   '/chat': typeof ChatIndexRoute
@@ -180,6 +210,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
   '/quests': typeof QuestsRoute
+  '/practice/mySentence': typeof PracticeMySentenceRoute
+  '/practice/myWord': typeof PracticeMyWordRoute
   '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
   '/practice/wordQuiz': typeof PracticeWordQuizRoute
   '/chat': typeof ChatIndexRoute
@@ -194,6 +226,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
   '/quests': typeof QuestsRoute
+  '/practice/mySentence': typeof PracticeMySentenceRoute
+  '/practice/myWord': typeof PracticeMyWordRoute
   '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
   '/practice/wordQuiz': typeof PracticeWordQuizRoute
   '/chat/': typeof ChatIndexRoute
@@ -209,6 +243,8 @@ export interface FileRouteTypes {
     | '/'
     | '/achievement'
     | '/quests'
+    | '/practice/mySentence'
+    | '/practice/myWord'
     | '/practice/sentenceQuiz'
     | '/practice/wordQuiz'
     | '/chat'
@@ -221,6 +257,8 @@ export interface FileRouteTypes {
     | '/'
     | '/achievement'
     | '/quests'
+    | '/practice/mySentence'
+    | '/practice/myWord'
     | '/practice/sentenceQuiz'
     | '/practice/wordQuiz'
     | '/chat'
@@ -233,6 +271,8 @@ export interface FileRouteTypes {
     | '/'
     | '/achievement'
     | '/quests'
+    | '/practice/mySentence'
+    | '/practice/myWord'
     | '/practice/sentenceQuiz'
     | '/practice/wordQuiz'
     | '/chat/'
@@ -247,6 +287,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementRoute: typeof AchievementRoute
   QuestsRoute: typeof QuestsRoute
+  PracticeMySentenceRoute: typeof PracticeMySentenceRoute
+  PracticeMyWordRoute: typeof PracticeMyWordRoute
   PracticeSentenceQuizRoute: typeof PracticeSentenceQuizRoute
   PracticeWordQuizRoute: typeof PracticeWordQuizRoute
   ChatIndexRoute: typeof ChatIndexRoute
@@ -260,6 +302,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementRoute: AchievementRoute,
   QuestsRoute: QuestsRoute,
+  PracticeMySentenceRoute: PracticeMySentenceRoute,
+  PracticeMyWordRoute: PracticeMyWordRoute,
   PracticeSentenceQuizRoute: PracticeSentenceQuizRoute,
   PracticeWordQuizRoute: PracticeWordQuizRoute,
   ChatIndexRoute: ChatIndexRoute,
@@ -282,6 +326,8 @@ export const routeTree = rootRoute
         "/",
         "/achievement",
         "/quests",
+        "/practice/mySentence",
+        "/practice/myWord",
         "/practice/sentenceQuiz",
         "/practice/wordQuiz",
         "/chat/",
@@ -299,6 +345,12 @@ export const routeTree = rootRoute
     },
     "/quests": {
       "filePath": "quests.tsx"
+    },
+    "/practice/mySentence": {
+      "filePath": "practice/mySentence.tsx"
+    },
+    "/practice/myWord": {
+      "filePath": "practice/myWord.tsx"
     },
     "/practice/sentenceQuiz": {
       "filePath": "practice/sentenceQuiz.tsx"
