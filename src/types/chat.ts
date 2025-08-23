@@ -8,6 +8,15 @@ export interface ChatMessage {
   chatbotId?: string;
 }
 
+// 실제 백엔드 SSE 메시지 타입
+export interface SSEMessage {
+  type: 'user' | 'bot' | 'bot_typing';
+  content?: string;
+  is_typing?: boolean;
+  timestamp: string;
+  session_id: string;
+}
+
 // 채팅 시작 요청
 export interface StartChatRequest {
   chatbotId: string;
@@ -32,9 +41,10 @@ export interface SendMessageRequest {
 // 메시지 전송 응답
 export interface SendMessageResponse {
   success: boolean;
-  message?: string;
   response?: string;
   sessionId?: string;
+  message_type?: 'user' | 'bot' | 'system'; // 백엔드 응답 타입 추가
+  timestamp?: string;
 }
 
 // 채팅 세션 정보
@@ -53,4 +63,15 @@ export interface ChatbotInfo {
   avatar: string;
   level: string;
   description: string;
+}
+
+// 세션 정리 요청
+export interface StopChatRequest {
+  chatbot_uuid: string;
+}
+
+// 세션 정리 응답
+export interface StopChatResponse {
+  message: string;
+  success: boolean;
 }

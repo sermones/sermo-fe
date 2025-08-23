@@ -4,13 +4,28 @@ import { useNavigate } from '@tanstack/react-router';
 interface ChatHeaderProps {
   chatbotName: string;
   chatbotAvatar?: string;
+  chatbotId: string;
+  onStopChat: () => void;
+  isSSEReady?: boolean; // SSE 연결 상태 추가
+  isConnected?: boolean; // SSE 연결 상태 추가
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ 
+export const ChatHeader: React.FC<ChatHeaderProps> = ({
   chatbotName,
-  chatbotAvatar
+  chatbotAvatar,
+  chatbotId,
+  onStopChat,
+  isSSEReady,
+  isConnected
 }) => {
   const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    // 채팅 세션 정리
+    onStopChat();
+    // 홈으로 이동
+    navigate({ to: '/home' });
+  };
 
   return (
     <>
@@ -20,7 +35,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <div className="flex items-center justify-between">
             {/* 뒤로가기 버튼 */}
             <button
-              onClick={() => navigate({ to: '/home' })}
+              onClick={handleBackClick}
               className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,6 +48,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                <h2 className="font-semibold text-gray-900 text-lg truncate">
                  {chatbotName}
                </h2>
+               {/* SSE 연결 상태 표시 */}
+               <div className="flex items-center justify-center space-x-2 mt-1">
+                 <div className={`w-2 h-2 rounded-full ${isSSEReady ? (isConnected ? 'bg-green-500' : 'bg-blue-500') : 'bg-yellow-500'}`}></div>
+                 <span className={`text-xs ${isSSEReady ? (isConnected ? 'text-green-600' : 'text-blue-600') : 'text-yellow-600'}`}>
+                   {isSSEReady 
+                     ? (isConnected ? '실시간 연결됨' : '일반 연결됨') 
+                     : '연결 중...'}
+                 </span>
+               </div>
              </div>
 
             {/* 설정 버튼 */}

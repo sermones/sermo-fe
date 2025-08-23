@@ -3,14 +3,34 @@ import {
   StartChatResponse, 
   SendMessageRequest, 
   SendMessageResponse,
-  ChatMessage 
+  ChatMessage,
+  SSEMessage,
+  StopChatRequest,
+  StopChatResponse
 } from '../types/chat';
 
-const API_BASE_URL = 'http://localhost:3000';
+// 환경에 따른 API URL 설정
+// 개발 환경에서는 Vite 프록시를 통해 호출 (CORS 문제 해결)
+const API_BASE_URL = import.meta.env.DEV 
+  ? ''  // 상대 경로 사용 (Vite 프록시가 처리)
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000');
 
-// 임시 테스트용 사용자 UUID (실제로는 백엔드에서 토큰으로 추출)
-const TEMP_USER_UUID = 'test-user-123';
-const TEMP_SESSION_ID = 'test-session-456';
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('개발 환경:', import.meta.env.DEV);
+
+// 인증 토큰 가져오기
+const getAuthToken = (): string | null => {
+  return localStorage.getItem('token');
+};
+
+// 인증 헤더 생성
+const getAuthHeaders = (): HeadersInit => {
+  const token = getAuthToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` }),
+  };
+};
 
 export const chatAPI = {
   // 챗봇 정보 가져오기 (실제 API 호출)
@@ -22,11 +42,8 @@ export const chatAPI = {
       // 실제 백엔드 API 호출
       const response = await fetch(`${API_BASE_URL}/chatbot/${chatbotId}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // 임시로 테스트용 사용자 UUID를 헤더에 포함
-          'X-User-UUID': TEMP_USER_UUID,
-        },
+        headers: getAuthHeaders(),
+        // CORS 문제 방지를 위해 credentials 옵션 제거
       });
 
       console.log('응답 상태:', response.status);
@@ -65,6 +82,73 @@ export const chatAPI = {
       return fallbackInfo;
     }
   },
+
+  // SSE 연결을 통한 채팅 세션 시작
+  async startChatSSE(chatbotId: string, onMessage: (data: SSEMessage) => void): Promise<EventSource> {
+    try {
+      console.log('=== startChatSSE API 호출 ===');
+      console.log('chatbotId:', chatbotId);
+
+      // 인증 토큰 가져오기
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error('인증 토큰이 없습니다.');
+      }
+
+      console.log('토큰 확인됨:', token.substring(0, 20) + '...');
+
+      // SSE 연결 생성 (쿼리 파라미터로 토큰 전달)
+      // 백엔드에서 JWT 토큰을 쿼리 파라미터로 받아서 인증 처리
+      const sseUrl = `${API_BASE_URL}/chat/start?chatbot_uuid=${chatbotId}&token=${token}`;
+      console.log('SSE URL:', sseUrl);
+      
+      // CORS 문제 해결을 위해 withCredentials 제거
+      const eventSource = new EventSource(sseUrl);
+
+      console.log('EventSource 생성됨, readyState:', eventSource.readyState);
+
+      // 메시지 수신 처리
+      eventSource.onmessage = (event) => {
+        try {
+          console.log('SSE 원시 메시지:', event.data);
+          const data: SSEMessage = JSON.parse(event.data);
+          console.log('SSE 메시지 파싱 완료:', data);
+          onMessage(data);
+        } catch (error) {
+          console.error('SSE 데이터 파싱 실패:', error);
+          console.error('파싱 실패한 데이터:', event.data);
+        }
+      };
+
+      // 연결 오류 처리
+      eventSource.onerror = (error) => {
+        console.error('SSE 연결 오류:', error);
+        console.error('EventSource readyState:', eventSource.readyState);
+        eventSource.close();
+      };
+
+      // 연결 열림 처리
+      eventSource.onopen = () => {
+        console.log('✅ SSE 연결 열림 이벤트 발생');
+        console.log('EventSource readyState:', eventSource.readyState);
+      };
+
+      // 추가 이벤트 리스너
+      eventSource.addEventListener('open', () => {
+        console.log('✅ SSE open 이벤트 리스너');
+      });
+
+      eventSource.addEventListener('error', (event) => {
+        console.error('❌ SSE error 이벤트 리스너:', event);
+      });
+
+      return eventSource;
+    } catch (error) {
+      console.error('SSE 연결 생성 실패:', error);
+      throw error;
+    }
+  },
+
   // 채팅 세션 시작 (실제 API 호출)
   async startChat(request: StartChatRequest): Promise<StartChatResponse> {
     try {
@@ -74,11 +158,7 @@ export const chatAPI = {
       // 실제 백엔드 API 호출
       const response = await fetch(`${API_BASE_URL}/chat/start?chatbot_uuid=${request.chatbotId}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // 임시로 테스트용 사용자 UUID를 헤더에 포함
-          'X-User-UUID': request.userId || TEMP_USER_UUID,
-        },
+        headers: getAuthHeaders(),
       });
 
       console.log('응답 상태:', response.status);
@@ -91,7 +171,7 @@ export const chatAPI = {
         console.log('⚠️ API 실패, 임시 세션 사용');
         const fallbackResponse: StartChatResponse = {
           success: true,
-          sessionId: TEMP_SESSION_ID,
+          sessionId: 'temp-session-' + Date.now(),
           message: '테스트 세션이 시작되었습니다.'
         };
         return fallbackResponse;
@@ -101,7 +181,7 @@ export const chatAPI = {
       console.log('✅ 실제 API에서 세션 시작됨 (SSE 연결)');
       const fallbackResponse: StartChatResponse = {
         success: true,
-        sessionId: TEMP_SESSION_ID,
+        sessionId: 'sse-session-' + Date.now(),
         message: '실제 세션이 시작되었습니다.'
       };
       return fallbackResponse;
@@ -112,7 +192,7 @@ export const chatAPI = {
       console.log('⚠️ 에러 발생, 임시 세션 사용');
       const fallbackResponse: StartChatResponse = {
         success: true,
-        sessionId: TEMP_SESSION_ID,
+        sessionId: 'error-session-' + Date.now(),
         message: '테스트 세션이 시작되었습니다.'
       };
       return fallbackResponse;
@@ -125,17 +205,20 @@ export const chatAPI = {
       console.log('=== sendMessage API 호출 ===');
       console.log('요청 데이터:', request);
 
+      // 세션 ID가 없거나 빈 문자열인 경우 처리
+      if (!request.sessionId || request.sessionId === '') {
+        console.log('⚠️ 세션 ID가 없음, 폴백 응답 생성');
+        return this.generateFallbackResponse(request.message);
+      }
+
       // 실제 백엔드 API 호출
       const response = await fetch(`${API_BASE_URL}/chat/send`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // 임시로 테스트용 사용자 UUID를 헤더에 포함
-          'X-User-UUID': request.userId || TEMP_USER_UUID,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           chatbot_uuid: request.chatbotId,
           message: request.message
+          // session_id는 백엔드에서 자동으로 처리하도록 제거
         }),
       });
 
@@ -157,7 +240,7 @@ export const chatAPI = {
       // 백엔드 응답을 프론트엔드 형식으로 변환
       const apiResponse: SendMessageResponse = {
         success: true,
-        response: responseData.message || '메시지가 전송되었습니다.',
+        response: responseData.message || responseData.content || '메시지가 전송되었습니다.',
         sessionId: responseData.session_id || request.sessionId
       };
       
@@ -200,7 +283,7 @@ export const chatAPI = {
     return {
       success: true,
       response: botResponse,
-      sessionId: TEMP_SESSION_ID
+      sessionId: 'fallback-session-' + Date.now()
     };
   },
 
@@ -212,11 +295,7 @@ export const chatAPI = {
       // 실제 백엔드 API 호출
       const response = await fetch(`${API_BASE_URL}/chat/history`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // 임시로 테스트용 사용자 UUID를 헤더에 포함
-          'X-User-UUID': TEMP_USER_UUID,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           chatbot_uuid: chatbotId,
           limit: limit,
@@ -253,7 +332,7 @@ export const chatAPI = {
     } catch (error) {
       console.error('채팅 기록 조회 실패:', error);
       
-      // 에러 시 localStorage에서 히스토리 가져오기
+      // 에러 시 localStorage에서 히스토리 로드
       console.log('⚠️ 에러 발생, localStorage에서 히스토리 로드');
       return this.getLocalStorageHistory(chatbotId);
     }
@@ -279,18 +358,31 @@ export const chatAPI = {
     }
   },
 
-  // 채팅 세션 종료
-  async stopChat(sessionId: string): Promise<boolean> {
+  // 채팅 세션 종료 (백엔드 API 사용)
+  async stopChat(chatbotId: string): Promise<boolean> {
     try {
+      console.log('=== stopChat API 호출 ===');
+      console.log('chatbotId:', chatbotId);
+
+      const request: StopChatRequest = {
+        chatbot_uuid: chatbotId
+      };
+
       const response = await fetch(`${API_BASE_URL}/chat/stop`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ sessionId }),
+        headers: getAuthHeaders(),
+        body: JSON.stringify(request),
       });
 
-      return response.ok;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('세션 종료 API 오류:', errorText);
+        return false;
+      }
+
+      const result: StopChatResponse = await response.json();
+      console.log('✅ 세션 종료 성공:', result);
+      return result.success;
     } catch (error) {
       console.error('채팅 종료 실패:', error);
       return false;

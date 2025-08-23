@@ -76,6 +76,18 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/chatbot': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/chat': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/image': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
       '/api/image': {
         target: 'http://localhost:3000',
         changeOrigin: true,
