@@ -182,9 +182,7 @@ function RouteComponent() {
                      <div className="font-bold font-style-Bold text-xl leading-[100%] tracking-[0%] text-left align-middle w-full h-6 opacity-100 gap-1">
                        {chatbot.name}
                      </div>
-                     <div className="w-full h-[19px] gap-2 opacity-100">
-                       {chatbot.details || '챗봇 설명'}
-                     </div>
+                    
                      {/* 마지막 메시지 미리보기 */}
                      {lastMessages[chatbot.uuid] && (
                        <div className="w-full mt-1 opacity-100">
