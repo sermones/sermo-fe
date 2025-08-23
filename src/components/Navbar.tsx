@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
     {
       id: 'home',
       label: '홈',
-      path: '/home/index',
+      path: '/home/',
       icon: (
         <img src="/nav_1.svg" alt="home" className="w-8 h-8" />
       ),
@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
     {
       id: 'practice',
       label: '연습',
-      path: '/home/practice',
+      path: '/practice',
       icon: (
         <img src="/nav_2.svg" alt="practice" className="w-8 h-8" />
       ),
@@ -34,7 +34,7 @@ export const Navbar: React.FC = () => {
     {
       id: 'quests',
       label: '퀘스트',
-      path: '/home/quests',
+      path: '/quests',
       icon: (
         <img src="/nav_3.svg" alt="quests" className="w-8 h-8" />
       ),
@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
     {
       id: 'achievement',
       label: '성과',
-      path: '/home',
+      path: '/achievement',
       icon: (
         <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
       ),
