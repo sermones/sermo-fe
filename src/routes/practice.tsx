@@ -8,6 +8,7 @@ export const Route = createFileRoute('/practice')({
 });
 
 function RouteComponent() {
+  console.log('Practice 페이지 렌더링됨');
   return (
     <ProtectedRoute>
       <div>

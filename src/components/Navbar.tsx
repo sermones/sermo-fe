@@ -49,8 +49,10 @@ export const Navbar: React.FC = () => {
   ], []);
 
   const handleTabClick = (item: NavItem) => {
+    console.log('Navbar 클릭:', item.id, item.path);
     setActiveTab(item.id);
     setActiveIndex(navItems.findIndex(nav => nav.id === item.id));
+    console.log('navigate 호출:', item.path);
     navigate({ to: item.path });
   };
 
