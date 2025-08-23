@@ -9,7 +9,7 @@ export const Route = createFileRoute('/home/newChat/makeCharacter')({
 
 function MakeCharacterPage() {
   const navigate = useNavigate();
-  const { createChatbot } = useAuth();
+  const { createChatbot, token } = useAuth();
   const [characterName, setCharacterName] = useState('');
   const [characterGender, setCharacterGender] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +26,8 @@ function MakeCharacterPage() {
   const [appearanceDescription, setAppearanceDescription] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [showCharacterInfo, setShowCharacterInfo] = useState(false);
+  const [createdCharacter, setCreatedCharacter] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 기본 성격 태그들
@@ -130,13 +132,29 @@ function MakeCharacterPage() {
         details: additionalDescription.trim() || `${characterName.trim()}와의 대화를 시작합니다.`,
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
-        image_id: selectedImage ? 'custom' : 'default',
+        image_id: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
       };
 
+      if (!token) {
+        throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+      }
+      
+      console.log('챗봇 생성 요청 데이터:', chatbotData);
+      console.log('토큰:', token);
+      
       await createChatbot(chatbotData);
       
-      // 성공 시 홈 페이지로 리다이렉트
-      navigate({ to: '/home' });
+      // 생성된 캐릭터 정보 설정
+      setCreatedCharacter({
+        name: characterName.trim(),
+        gender: characterGender || 'unknown',
+        hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
+        details: additionalDescription.trim(),
+        image_id: selectedImage ? 'custom' : 'default',
+        imagePreview: imagePreview
+      });
+      setShowCharacterInfo(true);
+      
     } catch (error) {
       setError(error instanceof Error ? error.message : '챗봇 생성에 실패했습니다');
     } finally {
@@ -493,6 +511,75 @@ function MakeCharacterPage() {
                 className="flex-1 px-4 py-2 bg-[#8E8EE7] text-white font-medium rounded-lg hover:bg-[#7A7AD8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 생성
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 캐릭터 생성 완료 정보 창 */}
+      {showCharacterInfo && createdCharacter && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-6 w-96 mx-4">
+            {/* NEW CHARACTER 라벨 */}
+            <div className="text-center mb-4">
+              <span className="text-gray-400 text-sm uppercase tracking-wide">NEW CHARACTER</span>
+            </div>
+            
+            {/* 프로필 이미지 */}
+            <div className="flex justify-center mb-4">
+              {createdCharacter.imagePreview ? (
+                <img 
+                  src={createdCharacter.imagePreview} 
+                  alt="프로필" 
+                  className="w-24 h-24 rounded-full object-cover border-2 border-[#8E8EE7]"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gray-200 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            
+            {/* 이름 */}
+            <div className="text-center mb-4">
+              <h3 className="text-black font-bold text-lg">{createdCharacter.name}</h3>
+            </div>
+            
+            {/* 성격 태그들 */}
+            <div className="flex flex-wrap gap-2 justify-center mb-4">
+              {createdCharacter.hashtags.slice(0, 3).map((tag: string, index: number) => (
+                <span 
+                  key={index}
+                  className="px-3 py-1 bg-[#8E8EE7] text-white text-sm rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            
+            {/* 추가 설명 (있는 경우에만 표시) */}
+            {createdCharacter.details && createdCharacter.details.trim() && (
+              <div className="mb-6 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 text-center">
+                  {createdCharacter.details}
+                </p>
+              </div>
+            )}
+            
+            {/* 채팅 시작 버튼 */}
+            <div className="flex justify-center">
+              <button
+                onClick={() => {
+                  setShowCharacterInfo(false);
+                  setCreatedCharacter(null);
+                  navigate({ to: '/home' });
+                }}
+                className="w-full px-8 py-4 bg-[#8E8EE7] text-white rounded-xl font-medium hover:bg-[#7A7AD8] transition-all duration-300 transform hover:scale-105 text-lg"
+              >
+                채팅 시작
               </button>
             </div>
           </div>

@@ -38,6 +38,8 @@ export interface Chatbot {
   hashtags: string[];
   image_id: string;
   created_at: string;
+  image_url?: string; // 직접 등록한 이미지 URL
+  ai_generated_image?: string; // AI 생성 이미지 URL
 }
 
 export interface CreateChatbotRequest {

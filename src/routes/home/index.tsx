@@ -31,6 +31,17 @@ function RouteComponent() {
     navigate({ to: '/home/newChat' });
   };
 
+  // 챗봇 이미지를 반환하는 함수
+  const getChatbotImage = (chatbot: any) => {
+    if (chatbot.image_id === 'custom' && chatbot.image_url) {
+      return chatbot.image_url; // 직접 등록한 이미지가 있는 경우
+    } else if (chatbot.image_id === 'ai' && chatbot.ai_generated_image) {
+      return chatbot.ai_generated_image; // AI 생성 이미지가 있는 경우
+    } else {
+      return '/Checker.png'; // 기본 이미지
+    }
+  };
+
   return (
     <ProtectedRoute>
       <div>
@@ -72,7 +83,16 @@ function RouteComponent() {
             {chatbots && chatbots.length > 0 ? (
               chatbots.map((chatbot) => (
                 <div key={chatbot.uuid} className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px]">
-                  <img src="/Checker.png" alt="profile" className="w-[50px] h-[50px] transform rotate-0 opacity-100 rounded-[48px]" />
+                  <img 
+                    src={getChatbotImage(chatbot)} 
+                    alt={`${chatbot.name} 프로필`} 
+                    className="w-[50px] h-[50px] transform rotate-0 opacity-100 rounded-[48px] object-cover"
+                    onError={(e) => {
+                      // 이미지 로드 실패 시 기본 이미지로 대체
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/Checker.png';
+                    }}
+                  />
                   <div className="text-left flex-1 h-[47px] gap-1 opacity-100 ml-3">
                     <div className="font-bold font-style-Bold text-xl leading-[100%] tracking-[0%] text-left align-middle w-full h-6 opacity-100 gap-1">
                       {chatbot.name}
