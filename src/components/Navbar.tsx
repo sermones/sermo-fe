@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
     {
       id: 'achievement',
       label: '성과',
-      path: '/home/achievement',
+      path: '/home',
       icon: (
         <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
       ),
@@ -52,30 +52,12 @@ export const Navbar: React.FC = () => {
   // 현재 경로에 맞는 탭을 자동으로 활성화
   useEffect(() => {
     const currentPath = location.pathname;
+    const matchingItem = navItems.find(item => item.path === currentPath);
     
-    // 동적 라우팅 패턴 매칭: /home/$tabId
-    if (currentPath.startsWith('/home/')) {
-      const pathSegments = currentPath.split('/');
-      const tabId = pathSegments[2]; // /home/practice -> practice
-      
-      if (tabId && tabId !== 'newChat') { // newChat은 제외
-        const matchingItem = navItems.find(item => item.id === tabId);
-        if (matchingItem) {
-          const newIndex = navItems.findIndex(nav => nav.id === matchingItem.id);
-          setActiveTab(matchingItem.id);
-          setActiveIndex(newIndex);
-          return;
-        }
-      }
-    }
-    
-    // 홈 페이지인 경우
-    if (currentPath === '/home' || currentPath === '/home/' || currentPath === '/home/index') {
-      const homeItem = navItems.find(item => item.id === 'home');
-      if (homeItem) {
-        setActiveTab('home');
-        setActiveIndex(0);
-      }
+    if (matchingItem) {
+      const newIndex = navItems.findIndex(nav => nav.id === matchingItem.id);
+      setActiveTab(matchingItem.id);
+      setActiveIndex(newIndex);
     }
   }, [location.pathname, navItems]);
 
