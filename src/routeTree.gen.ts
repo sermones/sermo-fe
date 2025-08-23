@@ -14,13 +14,10 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
-<<<<<<< HEAD
 import { Route as HomeQuestsImport } from './routes/home/quests'
 import { Route as HomePracticeImport } from './routes/home/practice'
-=======
 import { Route as HomeNewChatIndexImport } from './routes/home/newChat/index'
 import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/makeCharacter'
->>>>>>> feat_JS
 
 // Create/Update Routes
 
@@ -42,7 +39,6 @@ const HomeIndexRoute = HomeIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-<<<<<<< HEAD
 const HomeQuestsRoute = HomeQuestsImport.update({
   id: '/home/quests',
   path: '/home/quests',
@@ -52,7 +48,9 @@ const HomeQuestsRoute = HomeQuestsImport.update({
 const HomePracticeRoute = HomePracticeImport.update({
   id: '/home/practice',
   path: '/home/practice',
-=======
+  getParentRoute: () => rootRoute,
+} as any)
+
 const HomeNewChatIndexRoute = HomeNewChatIndexImport.update({
   id: '/home/newChat/',
   path: '/home/newChat/',
@@ -62,7 +60,6 @@ const HomeNewChatIndexRoute = HomeNewChatIndexImport.update({
 const HomeNewChatMakeCharacterRoute = HomeNewChatMakeCharacterImport.update({
   id: '/home/newChat/makeCharacter',
   path: '/home/newChat/makeCharacter',
->>>>>>> feat_JS
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -157,28 +154,32 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-<<<<<<< HEAD
-  fullPaths: '/' | '/auth' | '/home/practice' | '/home/quests' | '/home'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/home/practice' | '/home/quests' | '/home'
-  id: '__root__' | '/' | '/auth' | '/home/practice' | '/home/quests' | '/home/'
-=======
   fullPaths:
     | '/'
     | '/auth'
+    | '/home/practice'
+    | '/home/quests'
     | '/home'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/home' | '/home/newChat/makeCharacter' | '/home/newChat'
+  to:
+    | '/'
+    | '/auth'
+    | '/home/practice'
+    | '/home/quests'
+    | '/home'
+    | '/home/newChat/makeCharacter'
+    | '/home/newChat'
   id:
     | '__root__'
     | '/'
     | '/auth'
+    | '/home/practice'
+    | '/home/quests'
     | '/home/'
     | '/home/newChat/makeCharacter'
     | '/home/newChat/'
->>>>>>> feat_JS
   fileRoutesById: FileRoutesById
 }
 
@@ -214,15 +215,11 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/auth",
-<<<<<<< HEAD
         "/home/practice",
         "/home/quests",
-        "/home/"
-=======
         "/home/",
         "/home/newChat/makeCharacter",
         "/home/newChat/"
->>>>>>> feat_JS
       ]
     },
     "/": {
