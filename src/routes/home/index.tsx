@@ -18,6 +18,8 @@ function RouteComponent() {
     fetchChatbots();
   }, [fetchChatbots]);
 
+
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -42,9 +44,13 @@ function RouteComponent() {
     });
     
     if (chatbot.image_url) {
-      // image_url이 있으면 직접 사용 (fetchChatbots에서 가져온 실제 URL)
+      // image_url이 있으면 직접 사용
       console.log('저장된 image_url 사용:', chatbot.image_url);
       return chatbot.image_url;
+    } else if (chatbot.image_id) {
+      // image_id가 있으면 custom 이미지로 간주하고 기본 이미지 사용
+      console.log('image_id가 있지만 image_url이 없음, 기본 이미지 사용');
+      return '/Checker.png';
     } else if (chatbot.image_category === 'ai' && chatbot.ai_generated_image) {
       console.log('AI 생성 이미지 사용:', chatbot.ai_generated_image);
       return chatbot.ai_generated_image; // AI 생성 이미지가 있는 경우
@@ -93,8 +99,14 @@ function RouteComponent() {
             
             {/* Chat Items - 실제 챗봇 데이터 사용 */}
             {chatbots && chatbots.length > 0 ? (
-              chatbots.map((chatbot) => (
-                <div key={chatbot.uuid} className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px]">
+              chatbots.map((chatbot, index) => (
+                <div 
+                  key={chatbot.uuid} 
+                  className="mt-2 flex justify-between items-center w-full h-[66px] opacity-100 pt-2 pr-1 pb-2 gap-2.5 rounded-[20px] hover:bg-gray-50 transition-all duration-200 cursor-pointer"
+                  style={{
+                    animation: `slideIn 0.3s ease-out ${index * 0.1}s both`
+                  }}
+                >
                   <img 
                     src={getChatbotImage(chatbot)} 
                     alt={`${chatbot.name} 프로필`} 
@@ -140,6 +152,22 @@ function RouteComponent() {
           </div>
         </div>
       </div>
+      
+      {/* 애니메이션 CSS */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes slideIn {
+            from {
+              opacity: 0;
+              transform: translateX(-20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+        `
+      }} />
     </ProtectedRoute>
   );
 }

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useNavigate } from '@tanstack/react-router';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
+import { authAPI } from '../../../api/auth';
 
 export const Route = createFileRoute('/home/newChat/makeCharacter')({
   component: MakeCharacterPage,
@@ -126,6 +127,45 @@ function MakeCharacterPage() {
     setError(null);
 
     try {
+      if (!token) {
+        throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+      }
+
+      let imageId: string | undefined;
+      
+      // 이미지가 선택된 경우 먼저 업로드
+      if (selectedImage) {
+        try {
+          console.log('이미지 업로드 시작:', selectedImage.name);
+          console.log('사용할 토큰:', token ? token.substring(0, 20) + '...' : '토큰 없음');
+          
+          const uploadResponse = await authAPI.uploadImage(token, selectedImage);
+          imageId = uploadResponse.image.id; // 서버에서 반환된 image.id 저장
+          console.log('이미지 업로드 성공, ID:', imageId);
+        } catch (error) {
+          console.error('이미지 업로드 실패:', error);
+          
+          // 에러 메시지에 더 자세한 정보 포함
+          let errorMessage = '이미지 업로드에 실패했습니다.';
+          if (error instanceof Error) {
+            errorMessage += ` (${error.message})`;
+          }
+          
+          // 이미지 업로드 실패 시 사용자에게 알림
+          const continueWithoutImage = window.confirm(
+            `${errorMessage}\n\n이미지 없이 챗봇을 생성하시겠습니까?`
+          );
+          
+          if (continueWithoutImage) {
+            console.log('이미지 없이 챗봇 생성 진행');
+            imageId = undefined;
+          } else {
+            setError(errorMessage);
+            return;
+          }
+        }
+      }
+
       // 챗봇 생성 요청 데이터
       const chatbotData = {
         name: characterName.trim(),
@@ -133,12 +173,8 @@ function MakeCharacterPage() {
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
         image_category: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
-        image_id: selectedImage && imagePreview ? imagePreview : undefined, // imagePreview를 image_id로 사용
+        image_id: imageId, // 업로드된 이미지의 ID 또는 undefined
       };
-
-      if (!token) {
-        throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
-      }
       
       console.log('챗봇 생성 요청 데이터:', chatbotData);
       console.log('토큰:', token);
@@ -151,10 +187,16 @@ function MakeCharacterPage() {
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
         details: additionalDescription.trim(),
-        image_id: selectedImage ? 'custom' : 'default',
+        image_category: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
+        image_id: imageId, // 업로드된 이미지의 ID 또는 undefined
         imagePreview: imagePreview
       });
       setShowCharacterInfo(true);
+      
+      // 2초 후 홈 화면으로 자동 이동
+      setTimeout(() => {
+        navigate({ to: '/home' });
+      }, 2000);
       
     } catch (error) {
       setError(error instanceof Error ? error.message : '챗봇 생성에 실패했습니다');
@@ -570,6 +612,20 @@ function MakeCharacterPage() {
               </div>
             )}
             
+            {/* 성공 메시지 */}
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800 text-center">
+                ✅ 챗봇이 성공적으로 생성되었습니다!
+              </p>
+            </div>
+            
+            {/* 자동 이동 안내 */}
+            <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-xs text-blue-600 text-center">
+                ⏰ 2초 후 홈 화면으로 자동 이동됩니다
+              </p>
+            </div>
+            
             {/* 채팅 시작 버튼 */}
             <div className="flex justify-center">
               <button
@@ -580,7 +636,7 @@ function MakeCharacterPage() {
                 }}
                 className="w-full px-8 py-4 bg-[#8E8EE7] text-white rounded-xl font-medium hover:bg-[#7A7AD8] transition-all duration-300 transform hover:scale-105 text-lg"
               >
-                채팅 시작
+                지금 채팅 시작
               </button>
             </div>
           </div>
