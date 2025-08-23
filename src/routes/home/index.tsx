@@ -133,9 +133,9 @@ function RouteComponent() {
             </div>
             <button
               onClick={handleLogout}
-              className="bg-[#8E8EE7] text-white px-4 py-2 rounded-lg hover:bg-[#7A7AD8] transition-colors text-sm font-medium"
+              className="bg-red-300 text-white px-4 py-2 rounded-lg hover:bg-red-400 transition-colors text-sm font-bold"
             >
-              로그아웃
+              Logout
             </button>
           </div>
           

@@ -32,6 +32,7 @@ function MakeCharacterPage() {
   const [showCharacterInfo, setShowCharacterInfo] = useState(false);
   const [createdCharacter, setCreatedCharacter] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
 
   // 기본 성격 태그들
   const defaultPersonalities = [
@@ -96,6 +97,20 @@ function MakeCharacterPage() {
 
   const handleDirectUpload = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleGenderSelect = (gender: string) => {
+    setCharacterGender(gender);
+    setIsGenderDropdownOpen(false);
+  };
+
+  const getGenderLabel = (gender: string) => {
+    switch (gender) {
+      case 'male': return '남자';
+      case 'female': return '여자';
+      case 'unknown': return '지정 안 함';
+      default: return '채팅 상대의 성별을 선택하세요';
+    }
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -357,26 +372,59 @@ function MakeCharacterPage() {
             성별 (선택사항)
           </label>
           
-          <div className="relative">
-            <select
-              value={characterGender}
-              onChange={(e) => setCharacterGender(e.target.value)}
-              className="w-full px-4 py-3 border border-[#8E8EE7] rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8E8EE7] focus:border-transparent appearance-none"
-              disabled={isLoading}
-            >
-              <option value="">채팅 상대의 성별을 선택하세요</option>
-              <option value="male">남성</option>
-              <option value="female">여성</option>
-              <option value="unknown">선택 안함</option>
-            </select>
-            
-            {/* 커스텀 드롭다운 화살표 */}
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg className="w-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7-7 7-7" />
-              </svg>
+                      <div className="relative">
+              {/* 커스텀 성별 선택 UI */}
+              <div className="border border-purple-200 rounded-xl bg-white overflow-hidden">
+                {/* 선택된 값 표시 영역 (클릭 가능) */}
+                <button
+                  type="button"
+                  onClick={() => setIsGenderDropdownOpen(!isGenderDropdownOpen)}
+                  className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-purple-50 transition-colors"
+                  disabled={isLoading}
+                >
+                  <span className={characterGender ? 'text-gray-900' : 'text-gray-400'}>
+                    {getGenderLabel(characterGender)}
+                  </span>
+                  {/* 화살표 (위/아래 방향 전환) */}
+                  <svg 
+                    className={`w-5 h-5 text-gray-400 transition-transform ${
+                      isGenderDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                {/* 드롭다운 옵션들 */}
+                {isGenderDropdownOpen && (
+                  <div className="border-t border-purple-200">
+                    {[
+                      { value: 'male', label: '남자' },
+                      { value: 'female', label: '여자' },
+                      { value: 'unknown', label: '지정 안 함' }
+                    ].map((option, index) => (
+                      <div key={option.value}>
+                        <button
+                          type="button"
+                          onClick={() => handleGenderSelect(option.value)}
+                          className="w-full px-4 py-3 text-left hover:bg-purple-50 transition-colors text-gray-900"
+                          disabled={isLoading}
+                        >
+                          {option.label}
+                        </button>
+                        {/* 구분선 (마지막 옵션 제외) */}
+                        {index < 2 && (
+                          <div className="border-t border-purple-200"></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
         </div>
 
         {/* 성격 선택 섹션 - 애니메이션으로 나타남 */}
@@ -605,7 +653,7 @@ function MakeCharacterPage() {
 
       {/* AI 이미지 생성 모달 */}
       {showAIModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black/50 bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-6 w-96 mx-4">
             <h3 className="text-lg font-bold text-black mb-4">AI 이미지 생성</h3>
             
