@@ -1,19 +1,17 @@
 export interface LoginRequest {
-  email: string;
+  id: string;
   password: string;
 }
 
 export interface LoginResponse {
   accessToken: string;
-  refreshToken: string;
   user: User;
 }
 
 export interface RegisterRequest {
-  email: string;
+  id: string;
+  nickname: string;
   password: string;
-  confirmPassword: string;
-  name: string;
 }
 
 export interface RegisterResponse {
@@ -23,8 +21,7 @@ export interface RegisterResponse {
 
 export interface User {
   id: string;
-  email: string;
-  name: string;
+  nickname: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,7 +29,6 @@ export interface User {
 export interface AuthState {
   user: User | null;
   accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;

@@ -10,7 +10,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const { login, error, clearError, isLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    id: '',
     password: '',
   });
 
@@ -20,8 +20,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
 
     try {
       await login(formData);
-      // 로그인 성공 시 홈으로 리다이렉트
-      navigate({ to: '/' });
+      // 로그인 성공 시 home으로 리다이렉트
+      navigate({ to: '/home' });
     } catch (error) {
       // 에러는 이미 context에서 처리됨
     }
@@ -50,15 +50,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="id" className="block text-sm font-medium text-gray-700 mb-2">
               이메일
             </label>
             <div className="relative">
               <input
                 type="email"
-                id="email"
-                name="email"
-                value={formData.email}
+                id="id"
+                name="id"
+                value={formData.id}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-white/80"

@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '../types/auth';
+import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, User } from '../types/auth';
 
 // TODO: 백엔드 API 주소를 실제 주소로 변경
 const API_BASE_URL = 'http://localhost:3000';
@@ -40,49 +40,27 @@ export const authAPI = {
     return response.json();
   },
 
-  // 로그아웃
-  async logout(): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('로그아웃에 실패했습니다');
-    }
-  },
-
-  // 토큰 갱신
-  async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
-    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    if (!response.ok) {
-      throw new Error('토큰 갱신에 실패했습니다');
-    }
-
-    return response.json();
-  },
-
-  // 사용자 정보 조회
-  async getCurrentUser(accessToken: string): Promise<any> {
+  // 현재 사용자 정보 가져오기
+  async getCurrentUser(accessToken: string): Promise<User> {
     const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
     });
 
     if (!response.ok) {
-      throw new Error('사용자 정보 조회에 실패했습니다');
+      throw new Error('사용자 정보를 가져올 수 없습니다');
     }
 
     return response.json();
   },
-};
+
+  // 로그아웃
+  async logout(): Promise<void> {
+    // 백엔드에서 로그아웃 처리가 필요한 경우 여기에 구현
+    // 현재는 프론트엔드에서만 토큰 제거
+    return Promise.resolve();
+  }
+}

@@ -6,7 +6,6 @@ import { authAPI } from '../api/auth';
 const initialState: AuthState = {
   user: null,
   accessToken: localStorage.getItem('accessToken'),
-  refreshToken: localStorage.getItem('refreshToken'),
   isAuthenticated: false,
   isLoading: true,
   error: null,
@@ -15,7 +14,7 @@ const initialState: AuthState = {
 // 액션 타입
 type AuthAction =
   | { type: 'AUTH_START' }
-  | { type: 'AUTH_SUCCESS'; payload: { user: User; accessToken: string; refreshToken: string } }
+  | { type: 'AUTH_SUCCESS'; payload: { user: User; accessToken: string } }
   | { type: 'AUTH_FAILURE'; payload: string }
   | { type: 'AUTH_LOGOUT' }
   | { type: 'CLEAR_ERROR' }
@@ -35,7 +34,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         user: action.payload.user,
         accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
         isAuthenticated: true,
         isLoading: false,
         error: null,
@@ -51,7 +49,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         user: null,
         accessToken: null,
-        refreshToken: null,
         isAuthenticated: false,
         isLoading: false,
         error: null,
@@ -96,14 +93,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             payload: {
               user,
               accessToken: state.accessToken,
-              refreshToken: state.refreshToken!,
             },
           });
         } catch (error) {
           // 토큰이 유효하지 않으면 로그아웃
           dispatch({ type: 'AUTH_LOGOUT' });
           localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
         }
       } else {
         dispatch({ type: 'SET_LOADING', payload: false });
@@ -118,10 +113,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (state.accessToken) {
       localStorage.setItem('accessToken', state.accessToken);
     }
-    if (state.refreshToken) {
-      localStorage.setItem('refreshToken', state.refreshToken);
-    }
-  }, [state.accessToken, state.refreshToken]);
+  }, [state.accessToken]);
 
   // 로그인
   const login = async (credentials: LoginRequest) => {
@@ -133,7 +125,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         payload: {
           user: response.user,
           accessToken: response.accessToken,
-          refreshToken: response.refreshToken,
         },
       });
     } catch (error) {
@@ -151,7 +142,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       dispatch({ type: 'AUTH_START' });
       await authAPI.signup(userData);
       // 회원가입 성공 후 자동 로그인
-      await login({ email: userData.email, password: userData.password });
+      await login({ id: userData.id, password: userData.password });
     } catch (error) {
       dispatch({
         type: 'AUTH_FAILURE',
@@ -172,7 +163,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } finally {
       dispatch({ type: 'AUTH_LOGOUT' });
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
     }
   };
 
