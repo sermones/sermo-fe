@@ -312,10 +312,8 @@ function RouteComponent() {
               </p>
               
               {/* 임시 이미지 (나중에 수정 가능) */}
-              <div className="mb-6">
-                <div className="w-24 h-24 mx-auto bg-purple-200 rounded-lg flex items-center justify-center">
-                  <span className="text-purple-600 text-2xl">🎉</span>
-                </div>
+              <div className="flex justify-center mb-6">
+                <img src="/waong.svg" alt="waong" className="w-24 h-24" />
               </div>
               
               <button
