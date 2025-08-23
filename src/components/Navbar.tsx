@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
     {
       id: 'home',
       label: '홈',
-      path: '/home',
+      path: '/home/index',
       icon: (
         <img src="/nav_1.svg" alt="home" className="w-8 h-8" />
       ),
@@ -53,26 +53,29 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const currentPath = location.pathname;
     
-    // 정확한 경로 매칭 시도
-    let matchingItem = navItems.find(item => item.path === currentPath);
-    
-    // 정확한 매칭이 없으면 경로 포함 여부로 매칭
-    if (!matchingItem) {
-      if (currentPath.startsWith('/home/practice')) {
-        matchingItem = navItems.find(item => item.id === 'practice');
-      } else if (currentPath.startsWith('/home/quests')) {
-        matchingItem = navItems.find(item => item.id === 'quests');
-      } else if (currentPath.startsWith('/home/achievement')) {
-        matchingItem = navItems.find(item => item.id === 'achievement');
-      } else if (currentPath.startsWith('/home')) {
-        matchingItem = navItems.find(item => item.id === 'home');
+    // 동적 라우팅 패턴 매칭: /home/$tabId
+    if (currentPath.startsWith('/home/')) {
+      const pathSegments = currentPath.split('/');
+      const tabId = pathSegments[2]; // /home/practice -> practice
+      
+      if (tabId && tabId !== 'newChat') { // newChat은 제외
+        const matchingItem = navItems.find(item => item.id === tabId);
+        if (matchingItem) {
+          const newIndex = navItems.findIndex(nav => nav.id === matchingItem.id);
+          setActiveTab(matchingItem.id);
+          setActiveIndex(newIndex);
+          return;
+        }
       }
     }
     
-    if (matchingItem) {
-      const newIndex = navItems.findIndex(nav => nav.id === matchingItem.id);
-      setActiveTab(matchingItem.id);
-      setActiveIndex(newIndex);
+    // 홈 페이지인 경우
+    if (currentPath === '/home' || currentPath === '/home/' || currentPath === '/home/index') {
+      const homeItem = navItems.find(item => item.id === 'home');
+      if (homeItem) {
+        setActiveTab('home');
+        setActiveIndex(0);
+      }
     }
   }, [location.pathname, navItems]);
 

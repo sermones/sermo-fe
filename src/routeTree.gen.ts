@@ -13,10 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as HomeIndexImport } from './routes/home/index'
-import { Route as HomeQuestsImport } from './routes/home/quests'
-import { Route as HomePracticeImport } from './routes/home/practice'
-import { Route as HomeAchievementImport } from './routes/home/achievement'
+import { Route as HomeTabIdImport } from './routes/home/$tabId'
 import { Route as HomeNewChatIndexImport } from './routes/home/newChat/index'
 import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/makeCharacter'
 
@@ -34,27 +31,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const HomeIndexRoute = HomeIndexImport.update({
-  id: '/home/',
-  path: '/home/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const HomeQuestsRoute = HomeQuestsImport.update({
-  id: '/home/quests',
-  path: '/home/quests',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const HomePracticeRoute = HomePracticeImport.update({
-  id: '/home/practice',
-  path: '/home/practice',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const HomeAchievementRoute = HomeAchievementImport.update({
-  id: '/home/achievement',
-  path: '/home/achievement',
+const HomeTabIdRoute = HomeTabIdImport.update({
+  id: '/home/$tabId',
+  path: '/home/$tabId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -88,32 +67,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
-    '/home/achievement': {
-      id: '/home/achievement'
-      path: '/home/achievement'
-      fullPath: '/home/achievement'
-      preLoaderRoute: typeof HomeAchievementImport
-      parentRoute: typeof rootRoute
-    }
-    '/home/practice': {
-      id: '/home/practice'
-      path: '/home/practice'
-      fullPath: '/home/practice'
-      preLoaderRoute: typeof HomePracticeImport
-      parentRoute: typeof rootRoute
-    }
-    '/home/quests': {
-      id: '/home/quests'
-      path: '/home/quests'
-      fullPath: '/home/quests'
-      preLoaderRoute: typeof HomeQuestsImport
-      parentRoute: typeof rootRoute
-    }
-    '/home/': {
-      id: '/home/'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeIndexImport
+    '/home/$tabId': {
+      id: '/home/$tabId'
+      path: '/home/$tabId'
+      fullPath: '/home/$tabId'
+      preLoaderRoute: typeof HomeTabIdImport
       parentRoute: typeof rootRoute
     }
     '/home/newChat/makeCharacter': {
@@ -138,10 +96,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/home/achievement': typeof HomeAchievementRoute
-  '/home/practice': typeof HomePracticeRoute
-  '/home/quests': typeof HomeQuestsRoute
-  '/home': typeof HomeIndexRoute
+  '/home/$tabId': typeof HomeTabIdRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat': typeof HomeNewChatIndexRoute
 }
@@ -149,10 +104,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/home/achievement': typeof HomeAchievementRoute
-  '/home/practice': typeof HomePracticeRoute
-  '/home/quests': typeof HomeQuestsRoute
-  '/home': typeof HomeIndexRoute
+  '/home/$tabId': typeof HomeTabIdRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat': typeof HomeNewChatIndexRoute
 }
@@ -161,10 +113,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/home/achievement': typeof HomeAchievementRoute
-  '/home/practice': typeof HomePracticeRoute
-  '/home/quests': typeof HomeQuestsRoute
-  '/home/': typeof HomeIndexRoute
+  '/home/$tabId': typeof HomeTabIdRoute
   '/home/newChat/makeCharacter': typeof HomeNewChatMakeCharacterRoute
   '/home/newChat/': typeof HomeNewChatIndexRoute
 }
@@ -174,30 +123,21 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/home/achievement'
-    | '/home/practice'
-    | '/home/quests'
-    | '/home'
+    | '/home/$tabId'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/home/achievement'
-    | '/home/practice'
-    | '/home/quests'
-    | '/home'
+    | '/home/$tabId'
     | '/home/newChat/makeCharacter'
     | '/home/newChat'
   id:
     | '__root__'
     | '/'
     | '/auth'
-    | '/home/achievement'
-    | '/home/practice'
-    | '/home/quests'
-    | '/home/'
+    | '/home/$tabId'
     | '/home/newChat/makeCharacter'
     | '/home/newChat/'
   fileRoutesById: FileRoutesById
@@ -206,10 +146,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  HomeAchievementRoute: typeof HomeAchievementRoute
-  HomePracticeRoute: typeof HomePracticeRoute
-  HomeQuestsRoute: typeof HomeQuestsRoute
-  HomeIndexRoute: typeof HomeIndexRoute
+  HomeTabIdRoute: typeof HomeTabIdRoute
   HomeNewChatMakeCharacterRoute: typeof HomeNewChatMakeCharacterRoute
   HomeNewChatIndexRoute: typeof HomeNewChatIndexRoute
 }
@@ -217,10 +154,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  HomeAchievementRoute: HomeAchievementRoute,
-  HomePracticeRoute: HomePracticeRoute,
-  HomeQuestsRoute: HomeQuestsRoute,
-  HomeIndexRoute: HomeIndexRoute,
+  HomeTabIdRoute: HomeTabIdRoute,
   HomeNewChatMakeCharacterRoute: HomeNewChatMakeCharacterRoute,
   HomeNewChatIndexRoute: HomeNewChatIndexRoute,
 }
@@ -237,10 +171,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/auth",
-        "/home/achievement",
-        "/home/practice",
-        "/home/quests",
-        "/home/",
+        "/home/$tabId",
         "/home/newChat/makeCharacter",
         "/home/newChat/"
       ]
@@ -251,17 +182,8 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth.tsx"
     },
-    "/home/achievement": {
-      "filePath": "home/achievement.tsx"
-    },
-    "/home/practice": {
-      "filePath": "home/practice.jsx"
-    },
-    "/home/quests": {
-      "filePath": "home/quests.jsx"
-    },
-    "/home/": {
-      "filePath": "home/index.tsx"
+    "/home/$tabId": {
+      "filePath": "home/$tabId.tsx"
     },
     "/home/newChat/makeCharacter": {
       "filePath": "home/newChat/makeCharacter.tsx"
