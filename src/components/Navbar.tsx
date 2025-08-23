@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React, { useMemo, useCallback } from 'react';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -9,10 +9,10 @@ interface NavItem {
 }
 
 export const Navbar: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('home');
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const navItems: NavItem[] = [
+  const navItems = useMemo(() => [
     {
       id: 'home',
       label: '홈',
@@ -45,12 +45,18 @@ export const Navbar: React.FC = () => {
         <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
       ),
     },
-  ];
+  ], []);
 
-  const handleTabClick = (item: NavItem) => {
-    setActiveTab(item.id);
+  // 현재 경로에 따라 activeTab 직접 계산
+  const activeTab = useMemo(() => {
+    const currentPath = location.pathname;
+    const currentItem = navItems.find(item => item.path === currentPath);
+    return currentItem ? currentItem.id : 'home';
+  }, [location.pathname, navItems]);
+
+  const handleTabClick = useCallback((item: NavItem) => {
     navigate({ to: item.path });
-  };
+  }, [navigate]);
 
   return (
     <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[390px] max-w-[90vw] z-50">

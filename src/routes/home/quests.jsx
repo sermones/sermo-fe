@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import '../../style/shStyle.css';
+import { Navbar } from '../../components/Navbar';
 
 export const Route = createFileRoute('/home/quests')({
   component: RouteComponent,
@@ -62,6 +63,11 @@ function RouteComponent() {
               <div className="sh-streaks-message">{streaks.message}</div>
             </div>
           </div>
+        </div>
+        
+        {/* Navigation Bar */}
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[390px] max-w-[90vw] z-40">
+          <Navbar />
         </div>
       </div>
     </div>

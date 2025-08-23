@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Navbar } from '../../components/Navbar';
 
 export const Route = createFileRoute('/home/')({
   component: RouteComponent,
@@ -52,6 +53,11 @@ function RouteComponent() {
               <span className="text-[#8E8EE7] font-['Pretendard'] font-normal text-sm leading-[100%] tracking-[0%]">새 채팅</span>
             </button>
           </div>
+        </div>
+        
+        {/* Navigation Bar - iPhone 16 너비에 맞게 하단 고정 */}
+        <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[390px] max-w-[90vw] z-40">
+          <Navbar />
         </div>
       </div>
     </div>
