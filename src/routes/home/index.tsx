@@ -33,11 +33,21 @@ function RouteComponent() {
 
   // 챗봇 이미지를 반환하는 함수
   const getChatbotImage = (chatbot: any) => {
+    console.log('getChatbotImage 호출:', {
+      name: chatbot.name,
+      image_id: chatbot.image_id,
+      image_url: chatbot.image_url,
+      ai_generated_image: chatbot.ai_generated_image
+    });
+    
     if (chatbot.image_id === 'custom' && chatbot.image_url) {
+      console.log('직접 등록 이미지 사용:', chatbot.image_url);
       return chatbot.image_url; // 직접 등록한 이미지가 있는 경우
     } else if (chatbot.image_id === 'ai' && chatbot.ai_generated_image) {
+      console.log('AI 생성 이미지 사용:', chatbot.ai_generated_image);
       return chatbot.ai_generated_image; // AI 생성 이미지가 있는 경우
     } else {
+      console.log('기본 이미지 사용: /Checker.png');
       return '/Checker.png'; // 기본 이미지
     }
   };

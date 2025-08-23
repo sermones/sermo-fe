@@ -214,18 +214,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         hashtags: chatbotData.hashtags,
         image_id: chatbotData.image_id,
         created_at: new Date().toISOString(),
-        // 이미지 정보 추가 - imagePreview가 있으면 사용, 없으면 기본값
-        image_url: chatbotData.image_id === 'custom' && chatbotData.imagePreview ? chatbotData.imagePreview : undefined,
-        ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
-      };
-      
-      // chatbots가 배열인지 확인하고 안전하게 추가
-      if (Array.isArray(state.chatbots)) {
-        dispatch({ type: 'ADD_CHATBOT', payload: newChatbot });
-      } else {
-        // chatbots가 배열이 아니면 새로 설정
-        dispatch({ type: 'SET_CHATBOTS', payload: [newChatbot] });
-      }
+              // 이미지 정보 추가 - imagePreview가 있으면 사용, 없으면 기본값
+      image_url: chatbotData.image_id === 'custom' && chatbotData.imagePreview ? chatbotData.imagePreview : undefined,
+      ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
+    };
+    
+    console.log('새로 생성된 챗봇:', {
+      name: newChatbot.name,
+      image_id: newChatbot.image_id,
+      image_url: newChatbot.image_url,
+      imagePreview_존재: !!chatbotData.imagePreview
+    });
+    
+    // chatbots가 배열인지 확인하고 안전하게 추가
+    if (Array.isArray(state.chatbots)) {
+      console.log('기존 chatbots 배열에 추가:', state.chatbots.length);
+      dispatch({ type: 'ADD_CHATBOT', payload: newChatbot });
+    } else {
+      console.log('chatbots가 배열이 아님, 새로 설정');
+      dispatch({ type: 'SET_CHATBOTS', payload: [newChatbot] });
+    }
     } catch (error) {
       console.error('챗봇 생성 오류:', error);
       throw error;

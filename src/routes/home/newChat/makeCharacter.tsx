@@ -133,6 +133,7 @@ function MakeCharacterPage() {
         gender: characterGender || 'unknown',
         hashtags: selectedPersonalities.length > 0 ? selectedPersonalities : ['친구', '대화'],
         image_id: selectedImage ? 'custom' : (appearanceDescription.trim() ? 'ai' : 'default'),
+        imagePreview: selectedImage && imagePreview ? imagePreview : undefined,
       };
 
       if (!token) {
