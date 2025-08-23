@@ -1,7 +1,5 @@
-
-import React, { useState, useMemo, useEffect } from 'react';
-
-import { useNavigate, useLocation } from '@tanstack/react-router';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -12,17 +10,14 @@ interface NavItem {
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
   const [activeTab, setActiveTab] = useState('home');
   const [activeIndex, setActiveIndex] = useState(0);
-
 
   const navItems = useMemo(() => [
     {
       id: 'home',
       label: '홈',
-      path: '/home/',
+      path: '/home',
       icon: (
         <img src="/nav_1.svg" alt="home" className="w-8 h-8" />
       ),
@@ -44,45 +39,18 @@ export const Navbar: React.FC = () => {
       ),
     },
     {
-
-      id: 'ranking',
-      label: '랭킹',
-      path: '/home/ranking',
-
       id: 'achievement',
       label: '성과',
       path: '/achievement',
-
       icon: (
-        <img src="/nav_4.svg" alt="ranking" className="w-8 h-8" />
+        <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
       ),
     },
   ], []);
 
-
-  // 현재 경로에 따라 활성 탭 자동 설정 (초기값도 함께 설정)
-  const currentPath = location.pathname;
-  const currentItem = navItems.find(item => item.path === currentPath) || navItems[0];
-  const activeTab = currentItem.id;
-  const activeIndex = navItems.findIndex(nav => nav.id === currentItem.id);
-
   const handleTabClick = (item: NavItem) => {
-    // 실제 라우팅 구현
-
-  // 현재 경로에 맞는 탭을 자동으로 활성화
-  useEffect(() => {
-    const currentPath = location.pathname;
-    const matchingItem = navItems.find(item => item.path === currentPath);
-    
-    if (matchingItem) {
-      const newIndex = navItems.findIndex(nav => nav.id === matchingItem.id);
-      setActiveTab(matchingItem.id);
-      setActiveIndex(newIndex);
-    }
-  }, [location.pathname, navItems]);
-
-  const handleTabClick = (item: NavItem) => {
-
+    setActiveTab(item.id);
+    setActiveIndex(navItems.findIndex(nav => nav.id === item.id));
     navigate({ to: item.path });
   };
 
