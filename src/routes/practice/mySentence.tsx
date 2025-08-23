@@ -76,7 +76,7 @@ function RouteComponent() {
                     <p></p>
                     <span 
                       className={`text-lg text-gray-600 transition-all ${
-                        showMeanings ? 'opacity-100' : 'opacity-0 text-white'
+                        showMeanings ? 'opacity-100' : 'opacity-70 blur-sm text-gray-600 transition-all'
                       }`}
                     >
                       {sentence.meaning}

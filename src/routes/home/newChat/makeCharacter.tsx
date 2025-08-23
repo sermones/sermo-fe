@@ -291,7 +291,7 @@ function MakeCharacterPage() {
   return (
     <div className="bg-[#fbf5ff] min-h-screen">
       {/* Header */}
-      <div className="bg-gray-50 border-b border-gray-200">
+      <div className="border-b border-gray-200">
         <div className="flex items-center justify-between p-4">
           <button
             onClick={handleBack}
