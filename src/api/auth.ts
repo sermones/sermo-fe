@@ -99,5 +99,23 @@ export const authAPI = {
     // 백엔드에서 로그아웃 처리가 필요한 경우 여기에 구현
     // 현재는 프론트엔드에서만 토큰 제거
     return Promise.resolve();
+  },
+
+  // 이미지 조회 함수 추가
+  async getImage(token: string, imageId: string): Promise<{ url: string; image: any }> {
+    const response = await fetch(`${API_BASE_URL}/image/${imageId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': `application/json`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || '이미지 조회에 실패했습니다');
+    }
+
+    return response.json();
   }
 }

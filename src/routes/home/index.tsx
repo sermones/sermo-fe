@@ -40,9 +40,10 @@ function RouteComponent() {
       ai_generated_image: chatbot.ai_generated_image
     });
     
-    if (chatbot.image_id === 'custom' && chatbot.image_url) {
-      console.log('직접 등록 이미지 사용:', chatbot.image_url);
-      return chatbot.image_url; // 직접 등록한 이미지가 있는 경우
+    if (chatbot.image_id === 'custom' && chatbot.image_id !== 'default') {
+      // image_id가 실제 이미지 ID인 경우, 이미지 API로 URL 조회
+      console.log('이미지 ID로 URL 조회:', chatbot.image_id);
+      return `/api/image/${chatbot.image_id}`; // 프록시를 통해 이미지 API 호출
     } else if (chatbot.image_id === 'ai' && chatbot.ai_generated_image) {
       console.log('AI 생성 이미지 사용:', chatbot.ai_generated_image);
       return chatbot.ai_generated_image; // AI 생성 이미지가 있는 경우
