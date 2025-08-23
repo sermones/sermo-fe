@@ -24,11 +24,19 @@ export const Navbar: React.FC = () => {
       ),
     },
     {
+      id: 'chat',
+      label: '채팅',
+      path: '/chat',
+      icon: (
+        <img src="/nav_2.svg" alt="chat" className="w-8 h-8" />
+      ),
+    },
+    {
       id: 'practice',
       label: '연습',
       path: '/home/practice',
       icon: (
-        <img src="/nav_2.svg" alt="practice" className="w-8 h-8" />
+        <img src="/nav_3.svg" alt="practice" className="w-8 h-8" />
       ),
     },
     {
@@ -45,6 +53,7 @@ export const Navbar: React.FC = () => {
       path: '/home/achievement',
       icon: (
         <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
+      ),
       ),
     },
   ], []);
