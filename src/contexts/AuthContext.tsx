@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { AuthState, LoginRequest, RegisterRequest, User, Chatbot } from '../types/auth';
+import { AuthState, LoginRequest, RegisterRequest, User, Chatbot, CreateChatbotRequest } from '../types/auth';
 import { authAPI } from '../api/auth';
 
 // 초기 상태
@@ -20,7 +20,8 @@ type AuthAction =
   | { type: 'AUTH_LOGOUT' }
   | { type: 'CLEAR_ERROR' }
   | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_CHATBOTS'; payload: Chatbot[] };
+  | { type: 'SET_CHATBOTS'; payload: Chatbot[] }
+  | { type: 'ADD_CHATBOT'; payload: Chatbot };
 
 // 리듀서
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -70,6 +71,11 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         chatbots: action.payload,
       };
+    case 'ADD_CHATBOT':
+      return {
+        ...state,
+        chatbots: Array.isArray(state.chatbots) ? [...state.chatbots, action.payload] : [action.payload],
+      };
     default:
       return state;
   }
@@ -82,6 +88,7 @@ interface AuthContextType extends AuthState {
   logout: () => Promise<void>;
   clearError: () => void;
   fetchChatbots: () => Promise<void>;
+  createChatbot: (chatbotData: CreateChatbotRequest) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -135,6 +142,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           token: response.token,
         },
       });
+      await fetchChatbots();
     } catch (error) {
       dispatch({
         type: 'AUTH_FAILURE',
@@ -191,6 +199,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const createChatbot = async (chatbotData: CreateChatbotRequest) => {
+    if (!state.token) return;
+    try {
+      const response = await authAPI.createChatbot(state.token, chatbotData);
+      console.log('챗봇 생성 성공:', response);
+      
+      // 새로 생성된 챗봇을 목록에 추가
+      const newChatbot: Chatbot = {
+        uuid: response.chatbot_id,
+        name: chatbotData.name,
+        details: chatbotData.details,
+        gender: chatbotData.gender,
+        hashtags: chatbotData.hashtags,
+        image_id: chatbotData.image_id,
+        created_at: new Date().toISOString(),
+        // 이미지 정보 추가 (실제 구현에서는 백엔드에서 반환)
+        image_url: chatbotData.image_id === 'custom' ? '/custom-avatar.png' : undefined,
+        ai_generated_image: chatbotData.image_id === 'ai' ? '/ai-avatar.png' : undefined,
+      };
+      
+      // chatbots가 배열인지 확인하고 안전하게 추가
+      if (Array.isArray(state.chatbots)) {
+        dispatch({ type: 'ADD_CHATBOT', payload: newChatbot });
+      } else {
+        // chatbots가 배열이 아니면 새로 설정
+        dispatch({ type: 'SET_CHATBOTS', payload: [newChatbot] });
+      }
+    } catch (error) {
+      console.error('챗봇 생성 오류:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     ...state,
     login,
@@ -198,6 +239,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     logout,
     clearError,
     fetchChatbots,
+    createChatbot,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

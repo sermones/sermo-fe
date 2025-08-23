@@ -38,6 +38,21 @@ export interface Chatbot {
   hashtags: string[];
   image_id: string;
   created_at: string;
+  image_url?: string; // 직접 등록한 이미지 URL
+  ai_generated_image?: string; // AI 생성 이미지 URL
+}
+
+export interface CreateChatbotRequest {
+  name: string;
+  details: string;
+  gender: string;
+  hashtags: string[];
+  image_id: string;
+}
+
+export interface CreateChatbotResponse {
+  chatbot_id: string;
+  message: string;
 }
 
 // 인증 상태 타입

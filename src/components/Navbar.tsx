@@ -1,5 +1,5 @@
-import React, { useMemo, useCallback } from 'react';
-import { useNavigate, useLocation } from '@tanstack/react-router';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -10,7 +10,8 @@ interface NavItem {
 
 export const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('home');
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const navItems = useMemo(() => [
     {
@@ -47,38 +48,47 @@ export const Navbar: React.FC = () => {
     },
   ], []);
 
-  // 현재 경로에 따라 activeTab 직접 계산
-  const activeTab = useMemo(() => {
-    const currentPath = location.pathname;
-    const currentItem = navItems.find(item => item.path === currentPath);
-    return currentItem ? currentItem.id : 'home';
-  }, [location.pathname, navItems]);
-
-  const handleTabClick = useCallback((item: NavItem) => {
-    navigate({ to: item.path });
-  }, [navigate]);
+  const handleTabClick = (item: NavItem) => {
+    setActiveTab(item.id);
+    setActiveIndex(navItems.findIndex(nav => nav.id === item.id));
+    //navigate({ to: item.path });
+  };
 
   return (
-    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[390px] max-w-[90vw] z-50">
-      <div className="bg-gray-100 rounded-3xl border border-[#8E8EE7] shadow-lg">
-        <div className="flex items-center w-full">
-          {navItems.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => handleTabClick(item)}
-              className={`relative flex flex-col items-center justify-center flex-1 h-17 rounded-3xl transition-all duration-200 cursor-pointer ${
-                activeTab === item.id
-                  ? 'bg-[#8E8EE7] text-white'
-                  : 'text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              <div className={`${activeTab === item.id ? 'brightness-0 invert' : ''}`}>
-                {item.icon}
+    <div className="px-4 py-2">
+      <nav className="relative">
+        <div className="bg-gray-100 rounded-3xl border border-[#8E8EE7] shadow-lg relative overflow-hidden">
+          {/* 애니메이션 슬라이더 */}
+          <div
+            className="absolute top-0 left-0 w-1/4 h-full bg-[#8E8EE7] rounded-3xl transition-all duration-300 ease-out"
+            style={{
+              transform: `translateX(${activeIndex * 100}%)`
+            }}
+          />
+          <div className="flex items-center w-full relative z-10">
+            {navItems.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleTabClick(item)}
+                className={`relative flex flex-col items-center justify-center flex-1 h-17 rounded-3xl transition-all duration-300 cursor-pointer ${
+                  activeTab === item.id
+                    ? 'text-white'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <div className={`transition-all duration-300 ${
+                  activeTab === item.id
+                    ? 'brightness-0 invert scale-110'
+                    : 'scale-100'
+                }`}>
+                  {item.icon}
+                </div>
+                <span className="text-xs mt-1 font-medium">{item.label}</span>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 };
