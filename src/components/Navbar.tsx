@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -8,7 +9,8 @@ interface NavItem {
 }
 
 export const Navbar: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('book');
+  const [activeTab, setActiveTab] = useState('home');
+  const navigate = useNavigate();
 
   const navItems: NavItem[] = [
     {
@@ -20,25 +22,25 @@ export const Navbar: React.FC = () => {
       ),
     },
     {
-      id: 'book',
-      label: '학습',
-      path: '/book',
+      id: 'practice',
+      label: '연습',
+      path: '/home/practice',
       icon: (
-        <img src="/nav_2.svg" alt="book" className="w-8 h-8" />
+        <img src="/nav_2.svg" alt="practice" className="w-8 h-8" />
       ),
     },
     {
-      id: 'fitness',
-      label: '운동',
-      path: '/fitness',
+      id: 'quests',
+      label: '퀘스트',
+      path: '/home/quests',
       icon: (
-        <img src="/nav_3.svg" alt="fitness" className="w-8 h-8" />
+        <img src="/nav_3.svg" alt="quests" className="w-8 h-8" />
       ),
     },
     {
       id: 'achievement',
       label: '성과',
-      path: '/achievement',
+      path: '/home',
       icon: (
         <img src="/nav_4.svg" alt="achievement" className="w-8 h-8" />
       ),
@@ -47,11 +49,11 @@ export const Navbar: React.FC = () => {
 
   const handleTabClick = (item: NavItem) => {
     setActiveTab(item.id);
-    //navigate({ to: item.path });
+    navigate({ to: item.path });
   };
 
   return (
-    <nav className="">
+    <nav className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[390px] max-w-[90vw] z-50">
       <div className="bg-gray-100 rounded-3xl border border-[#8E8EE7] shadow-lg">
         <div className="flex items-center w-full">
           {navItems.map((item) => (

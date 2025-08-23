@@ -173,7 +173,7 @@ export const routeTree = rootRoute
       "filePath": "home/quests.jsx"
     },
     "/home/": {
-      "filePath": "home/index.jsx"
+      "filePath": "home/index.tsx"
     }
   }
 }

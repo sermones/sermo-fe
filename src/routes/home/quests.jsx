@@ -46,7 +46,7 @@ function RouteComponent() {
               className="sh-profile" 
               onClick={() => console.log(`${quest.title} 클릭`)}
             >
-              <img src="/Frame 11.png" alt={quest.title} className="sh-round-image" />
+              <img src="/Frame 11.png" alt={quest.title} className="sh-round-image-rounded" />
               <div className="sh-wrap">
                 <div className="sh-profile-name">{quest.title}</div>
               </div>
