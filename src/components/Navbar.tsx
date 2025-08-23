@@ -60,7 +60,7 @@ export const Navbar: React.FC = () => {
         <div className="bg-gray-100 rounded-3xl border border-[#8E8EE7] shadow-lg relative overflow-hidden">
           {/* 애니메이션 슬라이더 - 부드러운 이동 효과 */}
           <div
-            className="absolute top-0 left-0 w-1/4 h-full bg-gradient-to-b from-[#8E8EE7] to-[#7A7AD8] rounded-3xl transition-all duration-500 ease-out shadow-lg"
+            className="absolute top-0 left-0 w-1/4 h-full bg-gradient-to-b from-[#8E8EE7] to-[#7A7AD8] rounded-3xl transition-all duration-1000 ease-out shadow-lg"
             style={{
               transform: `translateX(${activeIndex * 100}%)`,
               boxShadow: '0 4px 20px rgba(142, 142, 231, 0.4)'
@@ -72,14 +72,14 @@ export const Navbar: React.FC = () => {
                 key={item.id}
                 onClick={() => handleTabClick(item)}
                 // 5. 텍스트 색상 변경에 부드러운 전환 효과를 줍니다.
-                className={`relative flex flex-col items-center justify-center flex-1 h-17 rounded-3xl transition-all duration-300 cursor-pointer group ${
+                className={`relative flex flex-col items-center justify-center flex-1 h-17 rounded-3xl transition-all duration-100 cursor-pointer group ${
                   activeId === item.id
                     ? 'text-white'
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
               >
                 {/* 6. 아이콘의 색상 필터와 크기 변경에 부드러운 전환 효과를 추가합니다. */}
-                <div className={`transition-all duration-300 ${
+                <div className={`transition-all duration-100 ${
                   activeId === item.id
                     ? 'brightness-0 invert scale-110' // 활성: 흰색으로, 1.1배 확대
                     : 'scale-100 group-hover:scale-105' // 비활성: 원래 크기, 호버 시 확대
