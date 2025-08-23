@@ -20,7 +20,6 @@
 .sh-myprofile-container {
   background-color: white;
   width: 100%;
-  height: 111px;
   opacity: 1;
   gap: 4px;
   border-radius: 20px;
@@ -30,14 +29,12 @@
 
 .sh-profile-title {
   color: #727272;
-  width: 21;
-  height: 17;
   opacity: 1;
   font-family: 'Pretendard', sans-serif;
   font-weight: 400;
   font-size: 14px;
   line-height: 100%;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   text-align: left;
   vertical-align: middle;
 }
@@ -47,22 +44,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 337;
-  height: 66;
+  width: 337px;
+  height: 66px;
   opacity: 1;
   padding-top: 8px;
   padding-right: 4px;
   padding-bottom: 8px;
   gap: 10px;
-  border-radius: 20px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
 }
 
 .sh-round-image {
   width: 50px;
   height: 50px;
-  transform: rotate(0deg); /* angle */
-  opacity: 1; /* 불투명 */
-  border-radius: 48px; /* 둥근 모서리 (거의 원) */
+  transform: rotate(0deg);
+  opacity: 1;
+  border-radius: 48px;
 }
 
 .sh-profile-name {
@@ -70,13 +69,15 @@
   font-style: Bold;
   font-size: 20px;
   line-height: 100%;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   text-align: left;
   vertical-align: middle;
   width: 205px;
   height: 24px;
   opacity: 1;
   gap: 4px;
+  display: flex;
+  align-items: center;
 }
 
 .sh-profile-imo {
@@ -110,14 +111,11 @@
   height: 47px;
   gap: 4px;
   opacity: 1;
+  display: flex;
+  align-items: center;
 }
 
-.sh-message {
-  width: 277;
-  height: 19;
-  gap: 8px;
-  opacity: 1;
-}
+
 
 .sh-newchat-container {
   margin-top: 20px;
@@ -135,4 +133,113 @@
   padding-right: 24px;
   padding-bottom: 6px;
   padding-left: 24px;
+}
+
+.sh-square-image {
+  width: 50px;
+  height: 50px;
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+/* PRACTICE 페이지 스타일 */
+.sh-practice-container {
+  background-color: #fbf5ff;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.sh-practice-title {
+  color: #8E8EE7;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 36px;
+  margin-bottom: 32px;
+  padding-top: 32px;
+}
+
+.sh-section-title {
+  color: var(--Gray70, #727272);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 16px;
+}
+
+.sh-card-container {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0px 3px 4px 0px #0000001a;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.sh-card-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sh-card-item:last-child {
+  border-bottom: none;
+}
+
+.sh-card-item:hover {
+  background-color: #f8f8f8;
+}
+
+.sh-card-icon {
+  width: 48px;
+  height: 48px;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sh-card-icon img {
+  width: 32px;
+  height: 32px;
+}
+
+.sh-card-content {
+  flex: 1;
+}
+
+.sh-card-title {
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.sh-card-description {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  color: #666;
+}
+
+.sh-card-arrow {
+  color: #ccc;
+  margin-left: 8px;
+}
+
+.sh-streaks-message {
+  color: var(--Semi-Black, #111);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 
 interface NavItem {
   id: string;
@@ -9,7 +8,6 @@ interface NavItem {
 }
 
 export const Navbar: React.FC = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('book');
 
   const navItems: NavItem[] = [

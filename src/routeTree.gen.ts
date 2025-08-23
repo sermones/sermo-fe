@@ -14,6 +14,8 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as HomeIndexImport } from './routes/home/index'
+import { Route as HomeQuestsImport } from './routes/home/quests'
+import { Route as HomePracticeImport } from './routes/home/practice'
 
 // Create/Update Routes
 
@@ -35,6 +37,18 @@ const HomeIndexRoute = HomeIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const HomeQuestsRoute = HomeQuestsImport.update({
+  id: '/home/quests',
+  path: '/home/quests',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const HomePracticeRoute = HomePracticeImport.update({
+  id: '/home/practice',
+  path: '/home/practice',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -53,6 +67,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
+    '/home/practice': {
+      id: '/home/practice'
+      path: '/home/practice'
+      fullPath: '/home/practice'
+      preLoaderRoute: typeof HomePracticeImport
+      parentRoute: typeof rootRoute
+    }
+    '/home/quests': {
+      id: '/home/quests'
+      path: '/home/quests'
+      fullPath: '/home/quests'
+      preLoaderRoute: typeof HomeQuestsImport
+      parentRoute: typeof rootRoute
+    }
     '/home/': {
       id: '/home/'
       path: '/home'
@@ -68,12 +96,16 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/home/practice': typeof HomePracticeRoute
+  '/home/quests': typeof HomeQuestsRoute
   '/home': typeof HomeIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/home/practice': typeof HomePracticeRoute
+  '/home/quests': typeof HomeQuestsRoute
   '/home': typeof HomeIndexRoute
 }
 
@@ -81,27 +113,33 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/home/practice': typeof HomePracticeRoute
+  '/home/quests': typeof HomeQuestsRoute
   '/home/': typeof HomeIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/home'
+  fullPaths: '/' | '/auth' | '/home/practice' | '/home/quests' | '/home'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/home'
-  id: '__root__' | '/' | '/auth' | '/home/'
+  to: '/' | '/auth' | '/home/practice' | '/home/quests' | '/home'
+  id: '__root__' | '/' | '/auth' | '/home/practice' | '/home/quests' | '/home/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  HomePracticeRoute: typeof HomePracticeRoute
+  HomeQuestsRoute: typeof HomeQuestsRoute
   HomeIndexRoute: typeof HomeIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  HomePracticeRoute: HomePracticeRoute,
+  HomeQuestsRoute: HomeQuestsRoute,
   HomeIndexRoute: HomeIndexRoute,
 }
 
@@ -117,6 +155,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/auth",
+        "/home/practice",
+        "/home/quests",
         "/home/"
       ]
     },
@@ -126,8 +166,14 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth.tsx"
     },
+    "/home/practice": {
+      "filePath": "home/practice.jsx"
+    },
+    "/home/quests": {
+      "filePath": "home/quests.jsx"
+    },
     "/home/": {
-      "filePath": "home/index.tsx"
+      "filePath": "home/index.jsx"
     }
   }
 }
