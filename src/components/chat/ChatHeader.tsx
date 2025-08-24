@@ -4,11 +4,13 @@ import { useNavigate } from '@tanstack/react-router';
 interface ChatHeaderProps {
   chatbotName: string;
   chatbotAvatar?: string;
+  isConnected?: boolean;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ 
   chatbotName,
-  chatbotAvatar
+  chatbotAvatar,
+  isConnected = true
 }) => {
   const navigate = useNavigate();
 
@@ -28,12 +30,19 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               </svg>
             </button>
             
-                         {/* 챗봇 이름 - 중앙 정렬 */}
-             <div className="flex-1 text-center min-w-0">
-               <h2 className="font-semibold text-gray-900 text-lg truncate">
-                 {chatbotName}
-               </h2>
-             </div>
+            {/* 챗봇 이름과 연결 상태 - 중앙 정렬 */}
+            <div className="flex-1 text-center min-w-0">
+              <h2 className="font-semibold text-gray-900 text-lg truncate">
+                {chatbotName}
+              </h2>
+              {/* 연결 상태 표시 */}
+              <div className="flex items-center justify-center mt-1">
+                <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <span className={`text-xs ${isConnected ? 'text-green-600' : 'text-red-600'}`}>
+                  {isConnected ? '연결됨' : '연결 끊김'}
+                </span>
+              </div>
+            </div>
 
             {/* 설정 버튼 */}
             <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0">
