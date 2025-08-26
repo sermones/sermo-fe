@@ -16,8 +16,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const navigate = useNavigate();
 
   // 인증된 사용자가 로그인 페이지에 접근하면 home으로 리다이렉트
+  // 단, 현재 경로가 /auth인 경우에만 적용
   useEffect(() => {
-    if (isAuthenticated && !isLoading) {
+    if (isAuthenticated && !isLoading && window.location.pathname === '/auth') {
       navigate({ to: '/home' });
     }
   }, [isAuthenticated, isLoading, navigate]);

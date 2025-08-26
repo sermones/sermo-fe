@@ -74,4 +74,21 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      '/chatbot': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/image': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/api/image': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/image/, '/image'),
+      },
+    },
+  },
 });
