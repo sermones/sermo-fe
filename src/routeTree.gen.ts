@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as NotificationsImport } from './routes/notifications'
 import { Route as AchievementImport } from './routes/achievement'
 import { Route as IndexImport } from './routes/index'
 import { Route as QuestsIndexImport } from './routes/quests/index'
@@ -26,6 +27,12 @@ import { Route as HomeNewChatMakeCharacterImport } from './routes/home/newChat/m
 import { Route as HomeNewChatChooseCharacterImport } from './routes/home/newChat/chooseCharacter'
 
 // Create/Update Routes
+
+const NotificationsRoute = NotificationsImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AchievementRoute = AchievementImport.update({
   id: '/achievement',
@@ -125,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AchievementImport
       parentRoute: typeof rootRoute
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsImport
+      parentRoute: typeof rootRoute
+    }
     '/practice/mySentence': {
       id: '/practice/mySentence'
       path: '/practice/mySentence'
@@ -210,6 +224,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
+  '/notifications': typeof NotificationsRoute
   '/practice/mySentence': typeof PracticeMySentenceRoute
   '/practice/myWord': typeof PracticeMyWordRoute
   '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
@@ -226,6 +241,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
+  '/notifications': typeof NotificationsRoute
   '/practice/mySentence': typeof PracticeMySentenceRoute
   '/practice/myWord': typeof PracticeMyWordRoute
   '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
@@ -243,6 +259,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/achievement': typeof AchievementRoute
+  '/notifications': typeof NotificationsRoute
   '/practice/mySentence': typeof PracticeMySentenceRoute
   '/practice/myWord': typeof PracticeMyWordRoute
   '/practice/sentenceQuiz': typeof PracticeSentenceQuizRoute
@@ -261,6 +278,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/achievement'
+    | '/notifications'
     | '/practice/mySentence'
     | '/practice/myWord'
     | '/practice/sentenceQuiz'
@@ -276,6 +294,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/achievement'
+    | '/notifications'
     | '/practice/mySentence'
     | '/practice/myWord'
     | '/practice/sentenceQuiz'
@@ -291,6 +310,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/achievement'
+    | '/notifications'
     | '/practice/mySentence'
     | '/practice/myWord'
     | '/practice/sentenceQuiz'
@@ -308,6 +328,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AchievementRoute: typeof AchievementRoute
+  NotificationsRoute: typeof NotificationsRoute
   PracticeMySentenceRoute: typeof PracticeMySentenceRoute
   PracticeMyWordRoute: typeof PracticeMyWordRoute
   PracticeSentenceQuizRoute: typeof PracticeSentenceQuizRoute
@@ -324,6 +345,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AchievementRoute: AchievementRoute,
+  NotificationsRoute: NotificationsRoute,
   PracticeMySentenceRoute: PracticeMySentenceRoute,
   PracticeMyWordRoute: PracticeMyWordRoute,
   PracticeSentenceQuizRoute: PracticeSentenceQuizRoute,
@@ -349,6 +371,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/achievement",
+        "/notifications",
         "/practice/mySentence",
         "/practice/myWord",
         "/practice/sentenceQuiz",
@@ -367,6 +390,9 @@ export const routeTree = rootRoute
     },
     "/achievement": {
       "filePath": "achievement.tsx"
+    },
+    "/notifications": {
+      "filePath": "notifications.tsx"
     },
     "/practice/mySentence": {
       "filePath": "practice/mySentence.tsx"

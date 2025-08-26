@@ -4,6 +4,8 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { registerSW } from "./pwa";
 import "./global.css";
+// Firebase 초기화를 위해 import
+import "./firebase.js";
 
 const router = createRouter({ routeTree });
 
@@ -14,7 +16,8 @@ declare module "@tanstack/react-router" {
 }
 
 // Service Worker 등록
-registerSW().catch(console.error);
+// FCM과 충돌 방지를 위해 PWA 서비스 워커 등록 비활성화
+// registerSW().catch(console.error);
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {

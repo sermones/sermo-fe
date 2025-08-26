@@ -17,20 +17,92 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// 백그라운드에서 푸시 메시지를 받았을 때 실행될 핸들러
+// 백그라운드 메시지 수신 처리
 messaging.onBackgroundMessage((payload) => {
-  console.log(
-    "[firebase-messaging-sw.js] Received background message ",
-    payload,
-  );
+  console.log('🎉 FCM 백그라운드 메시지 수신 성공!');
+  console.log('📱 전체 payload:', payload);
+  console.log('📝 알림 제목:', payload.notification?.title);
+  console.log('📄 알림 내용:', payload.notification?.body);
+  console.log('🔧 데이터:', payload.data);
+  console.log('⏰ 수신 시간:', new Date().toLocaleString());
 
-  // 사용자에게 보여줄 알림을 설정합니다.
-  const notificationTitle = payload.notification.title;
+  // 시스템 알림 표시
+  const notificationTitle = payload.notification?.title || '새 알림';
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/favicon.ico", // public 폴더에 있는 아이콘 경로로 변경 가능
+    body: payload.notification?.body || '',
+    icon: '/sermo.png',
+    badge: '/sermo.png',
+    tag: 'fcm-notification',
+    data: payload.data || {},
+    actions: [
+      {
+        action: 'open',
+        title: '열기'
+      },
+      {
+        action: 'close',
+        title: '닫기'
+      }
+    ]
   };
 
-  // 알림을 실제로 표시합니다.
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  console.log('🔔 시스템 알림 표시:', notificationTitle, notificationOptions);
+
+  // 알림 표시
+  const notification = self.registration.showNotification(notificationTitle, notificationOptions);
+
+  // 알림 클릭 이벤트 처리
+  self.addEventListener('notificationclick', (event) => {
+    console.log('👆 알림 클릭됨:', event.action);
+    event.notification.close();
+
+    if (event.action === 'open' || !event.action) {
+      // 앱 열기
+      event.waitUntil(
+        clients.openWindow('/')
+      );
+    }
+  });
+
+  // 알림을 로컬 스토리지에 저장 (IndexedDB 사용)
+  saveNotificationToStorage(payload);
 });
+
+// IndexedDB를 사용하여 알림 저장
+function saveNotificationToStorage(payload) {
+  const notification = {
+    id: `fcm_${Date.now()}`,
+    title: payload.notification?.title || '새 알림',
+    body: payload.notification?.body || '',
+    timestamp: Date.now(),
+    type: payload.data?.type === 'chat_message' ? 'chat_message' : 'test_message',
+    data: {
+      chatbot_name: payload.data?.chatbot_name,
+      chatbot_id: payload.data?.chatbot_id,
+      chat_message: payload.data?.chat_message,
+      message: payload.data?.message // BE 테스트 메시지용
+    }
+  };
+
+  // IndexedDB에 저장
+  const request = indexedDB.open('FCMNotifications', 1);
+  
+  request.onerror = (event) => {
+    console.error('IndexedDB 오류:', event.target.error);
+  };
+
+  request.onsuccess = (event) => {
+    const db = event.target.result;
+    const transaction = db.transaction(['notifications'], 'readwrite');
+    const store = transaction.objectStore('notifications');
+    
+    store.add(notification);
+  };
+
+  request.onupgradeneeded = (event) => {
+    const db = event.target.result;
+    if (!db.objectStoreNames.contains('notifications')) {
+      db.createObjectStore('notifications', { keyPath: 'id' });
+    }
+  };
+}

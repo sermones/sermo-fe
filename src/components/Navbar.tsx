@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 // 1. useNavigate와 useLocation 훅을 import 합니다.
 import { useNavigate, useLocation } from '@tanstack/react-router';
+import { useNotifications } from '../contexts/NotificationContext';
 
 // NavItem 인터페이스 정의
 interface NavItem {
@@ -15,6 +16,7 @@ export const Navbar: React.FC = () => {
   // 2. 라우터의 현재 위치 정보를 가져옵니다.
   const location = useLocation();
   const currentPath = location.pathname;
+  const { notifications } = useNotifications();
 
   // 네비게이션 아이템 목록
   const navItems = useMemo(() => [
@@ -54,6 +56,11 @@ export const Navbar: React.FC = () => {
     navigate({ to: item.path });
   };
 
+  // 알림 화면으로 이동
+  const handleNotificationClick = () => {
+    navigate({ to: '/notifications' });
+  };
+
   return (
     <div className="px-4 py-2">
       <nav className="relative">
@@ -90,6 +97,23 @@ export const Navbar: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+        
+        {/* 알림 아이콘 */}
+        <div className="absolute -top-2 -right-2">
+          <button
+            onClick={handleNotificationClick}
+            className="relative bg-white rounded-full p-2 shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <div className="w-6 h-6 text-purple-600">
+              🔔
+            </div>
+            {notifications.length > 0 && (
+              <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                {notifications.length > 9 ? '9+' : notifications.length}
+              </div>
+            )}
+          </button>
         </div>
       </nav>
     </div>
